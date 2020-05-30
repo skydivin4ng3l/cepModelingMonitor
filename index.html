@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font: 13px Helvetica, Arial;
+      }
+      form {
+        background: #000;
+        padding: 3px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+      form input {
+        border: 0;
+        padding: 10px;
+        width: 90%;
+        margin-right: 0.5%;
+      }
+      form button {
+        width: 9%;
+        background: rgb(130, 224, 255);
+        border: none;
+        padding: 10px;
+      }
+      #messages {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      #messages li {
+        padding: 5px 10px;
+      }
+      #messages li:nth-child(odd) {
+        background: #eee;
+      }
+    </style>
+  </head>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.js"></script>
+  <script>
+    $(function () {
+      var socket = io();
+      $("form").submit(function (e) {
+        e.preventDefault(); // prevents page reloading
+        socket.emit("chat message", $("#m").val());
+        $("#m").val("");
+        return false;
+      });
+      var test;
+      socket.on("chat message", function (msg) {
+        $("#messages").append($("<li>").text(msg));
+        test = msg;
+      });
+    });
+  </script>
+  <script>
+    var socket = io();
+  </script>
+  <body>
+    <div id="myholder"></div>
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    <script>
+      var graph = new joint.dia.Graph();
+
+      var paper = new joint.dia.Paper({
+        el: document.getElementById("myholder"),
+        model: graph,
+        width: 600,
+        height: 100,
+        gridSize: 1,
+      });
+
+      var rect = new joint.shapes.standard.Rectangle();
+      rect.position(100, 30);
+      rect.resize(100, 40);
+      rect.attr({
+        body: {
+          fill: "blue",
+        },
+        label: {
+          text: "Hello",
+          fill: "white",
+        },
+      });
+      rect.addTo(graph);
+
+      var rect2 = rect.clone();
+      rect2.translate(300, 0);
+      rect2.attr("label/text", "Wolrd!");
+      rect2.addTo(graph);
+
+      var link = new joint.shapes.standard.Link();
+      link.source(rect);
+      link.target(rect2);
+      link.addTo(graph);
+
+      socket.on("chat message", function (msg) {
+        rect2.attr("label/text", msg);
+      });
+    </script>
+  </body>
+</html>
