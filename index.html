@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>Cep Modeling & Monitoring</title>
     <style>
       * {
         margin: 0;
@@ -82,7 +82,11 @@
         model: graph,
         width: 600,
         height: 100,
-        gridSize: 1,
+        gridSize: 10,
+        drawGrid: true,
+        background: {
+          color: 'rgba(0, 255, 0, 0.3)'
+        }
       });
 
       var rect = new joint.shapes.standard.Rectangle();
@@ -112,7 +116,7 @@
       socket.on("kafka", function (msg) {
         rect.attr("label/text", msg);
       });
-
+      
       socket.on("chat message", function (msg) {
         rect2.attr("label/text", msg);
       });

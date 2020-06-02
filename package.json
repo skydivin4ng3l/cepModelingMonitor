@@ -1,7 +1,7 @@
 {
-  "name": "socket-chat",
+  "name": "cepmodelingmonitor",
   "version": "0.0.1",
-  "description": "my first socket.io app",
+  "description": "model cep pipelines and monitor them through kafka topics",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon -V index.js"
