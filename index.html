@@ -42,13 +42,17 @@
         background: #eee;
       }
     </style>
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.css" />
   </head>
+
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.js"></script>
+
   <script>
     $(function () {
       var socket = io();
@@ -69,57 +73,15 @@
     var socket = io();
   </script>
   <body>
+    <script type="module" src="client.js"></script>
     <div id="myholder"></div>
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
     <script>
-      var graph = new joint.dia.Graph();
 
-      var paper = new joint.dia.Paper({
-        el: document.getElementById("myholder"),
-        model: graph,
-        width: 600,
-        height: 100,
-        gridSize: 10,
-        drawGrid: true,
-        background: {
-          color: 'rgba(0, 255, 0, 0.3)'
-        }
-      });
-
-      var rect = new joint.shapes.standard.Rectangle();
-      rect.position(100, 30);
-      rect.resize(100, 40);
-      rect.attr({
-        body: {
-          fill: "blue",
-        },
-        label: {
-          text: "Hello",
-          fill: "white",
-        },
-      });
-      rect.addTo(graph);
-
-      var rect2 = rect.clone();
-      rect2.translate(300, 0);
-      rect2.attr("label/text", "Wolrd!");
-      rect2.addTo(graph);
-
-      var link = new joint.shapes.standard.Link();
-      link.source(rect);
-      link.target(rect2);
-      link.addTo(graph);
-
-      socket.on("kafka", function (msg) {
-        rect.attr("label/text", msg);
-      });
-      
-      socket.on("chat message", function (msg) {
-        rect2.attr("label/text", msg);
-      });
+     // initialize(document.getElementById("myholder"))
     </script>
   </body>
 </html>

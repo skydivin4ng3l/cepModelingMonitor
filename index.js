@@ -1,4 +1,5 @@
-var app = require("express")();
+var express = require("express");
+var app = express();
 var http = require("http").createServer(app);
 var io = require("socket.io")(http);
 var kafka = require("kafka-node");
@@ -6,12 +7,18 @@ var kafka = require("kafka-node");
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
+app.use(express.static(__dirname + "/src"));
 
 const client = new kafka.KafkaClient({ kafkaHost: "localhost:29092" });
-Consumer = kafka.Consumer;
-consumer = new Consumer(client, [{ topic: "test", partion: 0 }], {
-  autocommit: false,
-});
+try {
+  Consumer = kafka.Consumer;
+  consumer = new Consumer(client, [{ topic: "test", partion: 0 }], {
+    autocommit: false,
+  });
+} catch (e) {
+  console.log(e)
+}
+
 consumer.on("message", function (message) {
   console.log(message);
   console.log(message.value.toString());
