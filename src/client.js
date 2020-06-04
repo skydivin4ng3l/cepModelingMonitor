@@ -1,22 +1,65 @@
 import {CustomLink} from "./customlink.js";
+import {EditorEvents} from "./editorEvents.js";
+
 var CEPMOMO = new Object();
-CEPMOMO.initializeCEPMOMO = function(someElement){
+CEPMOMO.initializeCEPMOMO = function(editorMain,editorMini){
     // var CustomLink = require("customlink");
 
     var graph = new joint.dia.Graph();
 
+    var editorHeight = window.innerHeight*0.75;
+    var editorWidth = window.innerWidth;
+
+    // editorMain
     var paper = new joint.dia.Paper({
-        el: someElement,
+        el: editorMain,
         model: graph,
-        width: window.innerWidth,
-        height: window.innerHeight*0.75,
+        width: editorWidth,
+        height: editorHeight,
         gridSize: 10,
         drawGrid: true,
+        background: {
+            color: 'white'
+        }
+    });
+
+
+    // editorMini
+    var paperSmall = new joint.dia.Paper({
+        el: editorMini,
+        model: graph,
+        width: editorWidth*0.1,
+        height: editorHeight*0.1,
+        gridSize: 1,
+        interactive: false,
         background: {
             color: 'rgba(189,189,189,0.5)'
         }
     });
+    paperSmall.scale(0.1);
 
+    //InfoBox
+    var info = new joint.shapes.standard.Rectangle();
+    info.position(editorWidth / 2 - 50, 10);
+    info.resize(100, 20);
+    info.attr({
+        body: {
+            visibility: 'hidden',
+            cursor: 'default',
+            fill: 'white',
+            stoke: 'black'
+        },
+        label: {
+            visibility: 'hidden',
+            text: 'Link clicked',
+            cursor: 'default',
+            fill: 'black',
+            fontSize: 12
+        }
+    });
+    info.addTo(graph);
+    EditorEvents.init(paper, info);
+    //other
     var rect = new joint.shapes.standard.Rectangle();
     rect.position(100, 30);
     rect.resize(100, 40);
@@ -37,10 +80,10 @@ CEPMOMO.initializeCEPMOMO = function(someElement){
     rect2.attr("label/text", "Wolrd!");
     rect2.addTo(graph);
 
-    // var link = new joint.shapes.standard.Link();
-    // link.source(rect);
-    // link.target(rect2);
-    // link.addTo(graph);
+    var normallink = new joint.shapes.standard.Link();
+    normallink.source(rect);
+    normallink.target(rect2);
+    normallink.addTo(graph);
 
     // var link = new CustomLink();
     // link.attr({
@@ -125,7 +168,7 @@ CEPMOMO.initializeCEPMOMO = function(someElement){
             y: 70 // 80 + -10
         }
     });
-    link.addTo(graph);
+    //link.addTo(graph);
 
     function contract(link) {
         link.transition('source', { x: 200, y: 110 }, {
@@ -199,4 +242,4 @@ CEPMOMO.initializeCEPMOMO = function(someElement){
     });
 
 }
-CEPMOMO.initializeCEPMOMO(document.getElementById("myholder"));
+CEPMOMO.initializeCEPMOMO(document.getElementById("paper-main-window"),document.getElementById("paper-minimap-window"));
