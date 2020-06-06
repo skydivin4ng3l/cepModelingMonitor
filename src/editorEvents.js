@@ -66,4 +66,108 @@ EditorEvents.init = function (paper, info) {
             })
         }
     }
+    ///zooming
+    paper.on({
+        'blank:mousewheel': function(evt,x,y,delta) {
+            console.log(delta);
+
+            if (delta>0){
+                //zoom in
+                let currentScale = this.scale().sx;
+                if (currentScale >= 2) { return }
+                let newScale = currentScale +0.1;
+                this.scale(newScale,newScale )
+            } else {
+                //zoom out
+                let currentScale = this.scale().sx;
+                if (currentScale <= 0.2) { return }
+                let newScale = currentScale -0.1;
+                this.scale(newScale,newScale )
+            }
+        }
+    })
+    //panning
+    paper.on({
+        'blank:pointerdown': function(evt, x, y) {
+            console.log('dragstart',x,y)
+            let currentScale = this.scale().sx;
+            evt.data = { pan: {x: x * currentScale, y: y * currentScale} };
+        },
+        'blank:pointermove': function(evt, x, y) {
+            console.log('dragcontinue',x,y, evt)
+            let startDrag = evt.data.pan
+            let current = this.translate()
+            console.log('current',current.tx,current.ty, evt)
+            this.translate(startDrag.x - x , startDrag.y - y  )
+        },
+        'blank:pointerup': function(evt) {
+
+        }
+    });
+
+    //Hotkeys
+    $(document).on('keydown', function f(event) {
+        // console.log(event)
+    })
+    $(document).on('keypress', function f(event) {
+        // console.log(event)
+    })
+    $(document).on('keyup', function f(event) {
+        // console.log(event)
+    })
+
+    // Create a new link by dragging
+    // paper.on({
+    //     'blank:pointerdown': function(evt, x, y) {
+    //         var link = new joint.dia.Link();
+    //         link.set('source', { x: x, y: y });
+    //         link.set('target', { x: x, y: y });
+    //         link.addTo(this.model);
+    //         evt.data = { link: link, x: x, y: y };
+    //     },
+    //     'blank:pointermove': function(evt, x, y) {
+    //         evt.data.link.set('target', { x: x, y: y });
+    //     },
+    //     'blank:pointerup': function(evt) {
+    //         var target = evt.data.link.get('target');
+    //         if (evt.data.x === target.x && evt.data.y === target.y) {
+    //             // remove zero-length links
+    //             evt.data.link.remove();
+    //         }
+    //     }
+    // });
+
+    ///////Link Events
+    paper.on({
+        'link:source:click': function(linkView) {
+            linkView.model.attr({
+                sourceReferenceBody: { fill: 'white' },
+                targetReferenceBody: { fill: '#fe854f' }
+            });
+        },
+        'link:target:click': function(linkView) {
+            linkView.model.attr({
+                sourceReferenceBody: { fill: '#fe854f' },
+                targetReferenceBody: { fill: 'white' }
+            });
+        }
+    });
+
+
+
+    // Attribute Event
+
+    paper.on('myclick:circle', function(linkView, evt) {
+        evt.stopPropagation();
+        var link = linkView.model;
+        var t = (link.attr('c1/atConnectionRatio') > .2) ? .2 :.9; //this is the goal/targer
+        var transitionOpt = {
+            delay: 100,
+            duration: 2000,
+            timingFunction: joint.util.timing.inout
+        };
+        link.transition('attrs/c1/atConnectionRatio', t, transitionOpt);
+        link.transition('attrs/c2/atConnectionRatio', t, transitionOpt);
+    });
+
 }

@@ -8,7 +8,7 @@ export const CustomLink = joint.dia.Link.define('examples.CustomLink',{
             strokeLinejoin: 'round',
             targetMarker: {
                 'type': 'path',
-                'd': 'M 10 -5 0 0 10 5 z'
+                'd': 'M 10 -5 0 0 10 5 z' //implicit M move no drawing L lineTo
             }
         },
         relativeLabel: {
@@ -173,3 +173,89 @@ export const CustomLink = joint.dia.Link.define('examples.CustomLink',{
         selector: 'offsetLabelAbsolute'
     }]
 });
+
+// Custom Link
+
+export const AnimatedLink = new joint.dia.Link({
+    markup: [{
+        tagName: 'path',
+        selector: 'p1'
+    }, {
+        tagName: 'rect',
+        selector: 'sign'
+    }, {
+        tagName: 'circle',
+        selector: 'c1',
+    }, {
+        tagName: 'path',
+        selector: 'p2'
+    }, {
+        tagName: 'circle',
+        selector: 'c2'
+    }, {
+        tagName: 'text',
+        selector: 'signText'
+    }],
+    source: { x: 380, y: 380 },
+    target: { x: 740, y: 280 },
+    vertices: [{ x: 600, y: 280 }],
+    attrs: {
+        p1: {
+            connection: true,
+            fill: 'none',
+            stroke: 'black',
+            strokeWidth: 6,
+            strokeLinejoin: 'round'
+        },
+        p2: {
+            connection: true,
+            fill: 'none',
+            stroke: '#fe854f',
+            strokeWidth: 4,
+            pointerEvents: 'none',
+            strokeLinejoin: 'round',
+            targetMarker: {
+                'type': 'path',
+                'fill': '#fe854f',
+                'stroke': 'black',
+                'stroke-width': 1,
+                'd': 'M 10 -3 10 -10 -2 0 10 10 10 3'
+            }
+        },
+        sign: {
+            x: -20,
+            y: -10,
+            width: 40,
+            height: 20,
+            stroke: 'black',
+            fill: '#fe854f',
+            atConnectionLength: 30,
+            strokeWidth: 1,
+            event: 'myclick:rect'
+        },
+        signText: {
+            atConnectionLength: 30,
+            textAnchor: 'middle',
+            textVerticalAnchor: 'middle',
+            text: 'Link',
+        },
+        c1: {
+            r: 10,
+            stroke: 'black',
+            fill: '#fe854f',
+            atConnectionRatio: .5,
+            strokeWidth: 1,
+            event: 'myclick:circle',
+            cursor: 'pointer'
+        },
+        c2: {
+            r: 5,
+            stroke: 'black',
+            fill: 'white',
+            atConnectionRatio: .5,
+            strokeWidth: 1,
+            pointerEvents: 'none'
+        }
+    }
+});
+
