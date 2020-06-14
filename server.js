@@ -8,7 +8,7 @@ var app = express();
 var http = require("http").createServer(app);
 var io = require("socket.io")(http);
 var kafka = require("kafka-node");
-
+var protobuf = require("protobufjs");
 // import { fileURLToPath } from "url";
 // import { dirname} from "path";
 // const __filename = fileURLToPath(import.meta.url);
@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 app.use(express.static(__dirname + "/src"));
-Subscriber.ini(io, kafka);
+Subscriber.ini(io, kafka, protobuf);
 // const client = new kafka.KafkaClient({ kafkaHost: "localhost:29092" });
 // const admin = new kafka.Admin(client);
 // var topics = [{

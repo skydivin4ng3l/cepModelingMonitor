@@ -1,0 +1,46 @@
+syntax = "proto3";
+package models.events;
+option go_package = "github.com/bptlab/cepta/models/events/event";
+option java_package = "org.bptlab.cepta.models.events.event";
+
+import "CheckpointData.proto";
+import "CountryData.proto";
+import "CrewActivityData.proto";
+import "CrewPrepEndData.proto";
+import "CrewShiftData.proto";
+import "CrewTransitionData.proto";
+import "DelayExplanationData.proto";
+import "GPSTripUpdate.proto";
+import "InfrastructureManagerData.proto";
+import "LiveTrainData.proto";
+import "LocationData.proto";
+import "PlannedTrainData.proto";
+import "PredictedTrainData.proto";
+import "RailwayUndertakingData.proto";
+import "StationData.proto";
+import "TrainInformationData.proto";
+import "VehicleData.proto";
+import "WeatherData.proto";
+
+message Event {
+    oneof event {
+        models.events.CheckpointData checkpoint = 2;
+        models.events.CountryData country = 3;
+        models.events.CrewActivityData crew_activity = 4;
+        models.events.CrewPrepEndData crew_prep_end = 5;
+        models.events.CrewShiftData crew_shift = 6;
+        models.events.CrewTransitionData crew_transition = 7;
+        models.events.DelayExplanationData delay_explanation = 8;
+        models.events.GPSTripUpdate gps_trip_update = 9;
+        models.events.InfrastructureManagerData infrastructure_manager = 10;
+        models.events.LiveTrainData live_train = 11;
+        models.events.LocationData location = 12;
+        models.events.PlannedTrainData planned_train = 13;
+        models.events.PredictedTrainData predicted_train = 14;
+        models.events.RailwayUndertakingData railway_undertaking = 15;
+        models.events.StationData station = 16;
+        models.events.TrainInformationData train_information = 17;
+        models.events.VehicleData vehicle = 20;
+        models.events.WeatherData weather = 21;
+    }
+}

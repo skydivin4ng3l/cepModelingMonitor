@@ -1,0 +1,10 @@
+syntax = "proto3";
+package models.events;
+option go_package = "github.com/bptlab/cepta/models/events/countrydata";
+option java_package = "org.bptlab.cepta.models.events.countrydata"; //should this be in events? since this is more a database thing
+
+message CountryData {
+    int64 country_im_id = 1;
+    string country = 2;
+    string country_code = 3;
+}
