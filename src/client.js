@@ -226,7 +226,7 @@ CEPMOMO.initializeCEPMOMO = function(editorMain,editorMini){
     // link.addTo(graph);
 
     socket.on("kafka", function (msg) {
-        link.attr("label/text", msg);
+        rect.attr("label/text", msg);
     });
 
     socket.on("chat message", function (msg) {

@@ -4,7 +4,7 @@
   "description": "model cep pipelines and monitor them through kafka topics",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon -V index.js"
+    "start": "nodemon -V server.js"
   },
   "keywords": [],
   "author": "",
