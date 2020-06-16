@@ -2,7 +2,7 @@
 // import socket from "socket.io"
 // import protobuf from "protobufjs"
 const Subscriber = new Object();
-Subscriber.ini = function (io, kafka, protobuf) {
+Subscriber.ini = function (io, kafka, aggregateEvent) {
 
 
 
@@ -10,7 +10,7 @@ Subscriber.ini = function (io, kafka, protobuf) {
     const client = new kafka.KafkaClient({ kafkaHost: "localhost:29092" });
     const admin = new kafka.Admin(client);
     var topics = [{
-        topic: 'MONITOR_liveTrainDataStream',
+        topic: 'MONITOR_AGGREGATED_liveTrainDataStream',
         partitions: 1,
         replicationFactor: 1
     }];
@@ -23,7 +23,7 @@ Subscriber.ini = function (io, kafka, protobuf) {
     });
     try {
         Consumer = kafka.Consumer;
-        consumer = new Consumer(client, [{ topic: "MONITOR_liveTrainDataStream", partition: 0, offset: 0 }], {
+        consumer = new Consumer(client, [{ topic: "MONITOR_AGGREGATED_liveTrainDataStream", partition: 0, offset: 0 }], {
             autocommit: false,
             encoding: 'buffer',
             // keyEncoding: 'utf8',
@@ -36,29 +36,14 @@ Subscriber.ini = function (io, kafka, protobuf) {
 
 
     consumer.on("message", function (message) {
-        console.log(message);
-        var buf = new Buffer(message.value, 'binary');
-        //protobuf
-        protobuf.load(__dirname +"/events/Event.proto", function(err, root) {
-            if (err)
-                throw err;
+        console.log("message",message);
+        var buf = Buffer.from(message.value, 'binary');
 
-            var Event = root.lookupType("models.events.Event")
-            var decodedMessage = Event.decode(buf);
-            var object = Event.toObject(decodedMessage, {
-                enums: String,  // enums as string names
-                longs: String,  // longs as strings (requires long.js)
-                bytes: String,  // bytes as base64 encoded strings
-                defaults: true, // includes default values
-                arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
-                objects: true,  // populates empty objects (map fields) even if defaults=false
-                oneofs: true    // includes virtual oneof fields set to the present field's name
-            });
-            console.log(object.liveTrain.stationId);
-            console.log(decodedMessage);
-            console.log(message.value.toString());
-            io.emit("kafka", message.value.toString());
-        })
+        var decodedMessage = aggregateEvent.Aggregate.deserializeBinary(buf);
+        console.log("decodedMessage",decodedMessage)
+        console.log(message.topic,"value",decodedMessage.getVolume())
+
+        io.emit("kafka", decodedMessage.getVolume());
 
     });
 

@@ -4,13 +4,15 @@
   "description": "model cep pipelines and monitor them through kafka topics",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon -V server.js"
+    "start": "nodemon -V server.js",
+    "build_proto": "protoc --js_out=import_style=commonjs,binary:./src/protos ./models/events/Aggregate.proto"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "google-protobuf": "^3.12.2",
     "jointjs": "^3.1.1",
     "kafka-node": "^5.0.0",
     "long": "^4.0.0",
