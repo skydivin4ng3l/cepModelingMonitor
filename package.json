@@ -13,6 +13,7 @@
     "express": "^4.17.1",
     "jointjs": "^3.1.1",
     "kafka-node": "^5.0.0",
+    "long": "^4.0.0",
     "protobufjs": "^6.9.0",
     "socket.io": "^2.3.0"
   }
