@@ -1,8 +1,10 @@
 import {CustomLink,AnimatedLink} from "./customlink.js";
 import {EditorEvents} from "./editorEvents.js";
+import {CUSTOMELEMENTS} from "./htmlElement.js";
 
-const CEPMOMO = new Object();
-CEPMOMO.initializeCEPMOMO = function(editorMain,editorMini){
+const CEPMODEMON = new Object();
+CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
+    CUSTOMELEMENTS.init();
 
     var verticesTool = new joint.linkTools.Vertices();
     var segmentsTool = new joint.linkTools.Segments();
@@ -168,6 +170,14 @@ CEPMOMO.initializeCEPMOMO = function(editorMain,editorMini){
     });
     info.addTo(graph);
     EditorEvents.init(paper, info);
+
+    var html = new joint.shapes.html.Element({
+        position: { x: 80, y: 80 },
+        size: { width: 170, height: 100 },
+        label: 'I am HTML',
+            select: 'one'
+    });
+    html.addTo(graph);
 
     var epa = new joint.shapes.devs.Model();
     epa.position(200,40);
@@ -367,7 +377,7 @@ CEPMOMO.initializeCEPMOMO = function(editorMain,editorMini){
 
 }
 $(document).ready( function() {
-        CEPMOMO.initializeCEPMOMO(document.getElementById("paper-main-window"),document.getElementById("paper-minimap-window"));
+        CEPMODEMON.initializeCEPMODEMON(document.getElementById("paper-main-window"),document.getElementById("paper-minimap-window"));
     }
 )
 

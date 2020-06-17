@@ -23,11 +23,11 @@ Subscriber.ini = function (io, kafka, aggregateEvent) {
     });
     try {
         Consumer = kafka.Consumer;
-        consumer = new Consumer(client, [{ topic: "MONITOR_AGGREGATED_liveTrainDataStream", partition: 0, offset: 0 }], {
+        consumer = new Consumer(client, [{ topic: "MONITOR_AGGREGATED_liveTrainDataStream", partition: 0/*, offset: 0*/ }], {
             autocommit: false,
             encoding: 'buffer',
             // keyEncoding: 'utf8',
-            fromOffset: true,
+            fromOffset: 'latest'/*true*/,
         });
     } catch (e) {
         console.log(e)
