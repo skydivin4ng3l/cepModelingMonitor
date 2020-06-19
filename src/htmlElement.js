@@ -1,6 +1,116 @@
 export const CUSTOMELEMENTS = new Object()
 CUSTOMELEMENTS.init = function() {
 
+    joint.shapes.cep = {};
+    joint.shapes.cep.Link =joint.dia.Link.define('cep.Link',{
+        attrs: {
+            line: {
+                targetMarker: {
+                    'type': 'path',
+                    'stroke': 'black',
+                    'd': 'M 10 -5 0 0 10 5 z'
+                }
+            }
+        },
+        defaultLabel: {
+            markup: [
+                {
+                    tagName: 'rect',
+                    selector: 'body'
+                }, {
+                    tagName: 'text',
+                    selector: 'label'
+                }
+            ],
+            attrs: {
+                label: {
+                    fill: 'black',
+                    fontSize: 12,
+                    textAnchor: 'middle',
+                    yAlignment: 'middle',
+                    pointerEvents: 'none',
+                    text: 'buuuuh',
+
+                },
+                body: {
+                    ref: 'label',
+                    fill: 'white',
+                    stroke: 'cornflowerblue',
+                    strokeWidth: 2,
+                    refWidth: '120%',
+                    refHeight: '120%',
+                    refX: '-10%',
+                    refY: '-10%',
+                    event: 'monitor:change:source',
+                    cursor: 'text'
+                }
+            },
+            position: {
+                distance: 0.5,
+                offset: 20,
+            }
+        }
+    })
+
+
+    joint.shapes.cep.Element = joint.shapes.basic.Rect.define(
+        'cep.Element',
+        {
+            attrs: {
+                rect: {
+                    stroke: 'green',
+                    refWidth: '100%',
+                    refHeight: '100%',
+                    fillOpacity: '0',
+                },
+                '.content': {
+                    text: '',
+                    'ref-x': .5,
+                    'ref-y': .5,
+                    'y-alignment': 'middle',
+                    'x-alignment': 'middle'
+                }
+            }
+        },{
+            markup: [{
+                tagName: 'g',
+                className: 'rotatable',
+                children: [{
+                   tagName: 'g',
+                   className: 'scalable',
+                   children: [{
+                       tagName: 'rect',
+                       selector: 'rect',
+                   },{
+                       tagName: 'foreignObject',
+                       className: 'fobj',
+                       children: [{
+                           tagName: 'body',
+                           namespaceURI: 'http://www.w3.org/1999/xhtml',
+                           children: [{
+                               tagName: 'div',
+                               className: 'content',
+                               selector: 'content',
+                               children: [{
+                                   tagName: 'input',
+                                   attributes: {
+                                       type: 'text',
+                                       value: 'Heyhooooo'
+                                   }
+                               }]
+
+                           }]
+                       }]
+
+                   }]
+                }],
+
+            },
+            ]
+        }
+    )
+
+
     // Create a custom element.
     // ------------------------
 
@@ -10,7 +120,7 @@ CUSTOMELEMENTS.init = function() {
         defaults: joint.util.defaultsDeep({
             type: 'html.Element',
             attrs: {
-                rect: { stroke: 'none', 'fill-opacity': 0 }
+                rect: { stroke: 'none', 'fill-opacity': 50 }
             }
         }, joint.shapes.basic.Rect.prototype.defaults)
     });
@@ -21,7 +131,7 @@ CUSTOMELEMENTS.init = function() {
     joint.shapes.html.ElementView = joint.dia.ElementView.extend({
 
         template: [
-            '<div class="html-element" style="position: fixed">',
+            '<div class="html-element">',
             '<button class="delete">x</button>',
             '<label></label>',
             '<span></span>', '<br/>',
@@ -58,21 +168,26 @@ CUSTOMELEMENTS.init = function() {
         render: function() {
             joint.dia.ElementView.prototype.render.apply(this, arguments);
             this.paper.$el.prepend(this.$box);
+
             this.updateBox();
             return this;
         },
         updateBox: function() {
             // Set the position and dimension of the box so that it covers the JointJS element.
             var bbox = this.model.getBBox();
+
+            // var scale = this.paper.scale();
             // Example of updating the HTML with a data stored in the cell model.
             this.$box.find('label').text(this.model.get('label'));
             this.$box.find('span').text(this.model.get('select'));
             this.$box.css({
-                width: bbox.width,
-                height: bbox.height,
+                width: bbox.width /*/ scale.sx*/,
+                height: bbox.height /*/ scale.sy*/,
                 left: bbox.x,
                 top: bbox.y,
-                transform: 'rotate(' + (this.model.get('angle') || 0) + 'deg)'
+                transform: 'rotate(' + (this.model.get('angle') || 0) + 'deg)',
+                // transform: 'scale(' +scale.sx + ',' + scale.sy + ')',
+                // transformOrigin: '0 0',
             });
         },
         removeBox: function(evt) {

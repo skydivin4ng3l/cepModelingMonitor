@@ -43,6 +43,16 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         snapLinks: true,
         preventContextMenu: false,
         //linkPinning: false,
+        defaultLink: new joint.shapes.cep.Link({
+            defaultLabel: {
+                attrs: {
+                    label: {
+                        text: 'Enter your Stream here'
+                    }
+                }
+            }
+
+        })
     });
 
     // editorElementToolBar
@@ -70,7 +80,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             }
         }
     });
-    var r2 = new joint.shapes.basic.Rect({
+    var r2 = new joint.shapes.devs.Model({
         position: {
             x: 120,
             y: 10
@@ -85,7 +95,22 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             }
         }
     });
-    editorElementToolBarGraph.addCells([r1, r2]);
+    var r3 = new joint.shapes.html.Element({
+        position: {
+            x: 240,
+            y: 10
+        },
+        size: {
+            width: 100,
+            height: 40
+        },
+        attrs: {
+            text: {
+                text: 'html'
+            }
+        }
+    });
+    editorElementToolBarGraph.addCells([r1, r2, r3]);
 
     editorElementToolBarPaper.on('cell:pointerdown', function(cellView, e, x, y) {
         $('body').append('<div id="flyPaper" style="position:fixed;z-index:100;opacity:.7;pointer-event:none;"></div>');
@@ -135,8 +160,8 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         });
     });
 
-    // editorMini
-    var paperSmall = new joint.dia.Paper({
+    // editorMini conflicts with html element
+    /*var paperSmall = new joint.dia.Paper({
         el: editorMini,
         model: graph,
         width: editorWidth*0.1,
@@ -147,7 +172,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             color: 'rgba(189,189,189,0.5)'
         }
     });
-    paperSmall.scale(0.1);
+    paperSmall.scale(0.1);*/
 
     //InfoBox
     var info = new joint.shapes.standard.Rectangle();
@@ -171,13 +196,66 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     info.addTo(graph);
     EditorEvents.init(paper, info);
 
+    // Single port definition
+    var port = {
+        // id: 'abc', // generated if `id` value is not present
+        group: 'a',
+
+        args: {}, // extra arguments for the port layout function, see `layout.Port` section
+        label: {
+            position: {
+                name: 'right',
+                args: { y: 6 } // extra arguments for the label layout function, see `layout.PortLabel` section
+            },
+            markup: '<text class="label-text" fill="blue"/>'
+        },
+        attrs: {
+            text: { text: 'port1' },
+
+            position: {
+                name: 'right'
+            },
+            magnet: true
+        },
+        markup: '<rect width="16" height="16" x="-8" stroke ="red" fill="gray"/>'
+    };
+
     var html = new joint.shapes.html.Element({
         position: { x: 80, y: 80 },
         size: { width: 170, height: 100 },
         label: 'I am HTML',
-            select: 'one'
+            select: 'one',
+        ports: {
+            groups: {a:{
+                position: {
+                    name: 'right'
+                },
+                attrs: {
+                    '.port-label': {
+                        fill: '#000'
+                    },
+                    '.joint-port-body': {
+                        fill: '#fff',
+                        stroke: '#000',
+                        r: 10,
+                        magnet: true,
+                    }
+                },
+                }}
+        },
+        attrs: {
+           '.':{ magnet: false }
+        }
     });
+    html.addPort(port);
     html.addTo(graph);
+
+    var cep = new joint.shapes.cep.Element({
+        position: {x: 160, y: 160},
+        size: {width: 170, height: 100},
+    });
+    cep.addPort(port);
+    cep.addTo(graph);
 
     var epa = new joint.shapes.devs.Model();
     epa.position(200,40);
@@ -198,6 +276,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             fill: "white",
         },
     });
+    rect.addPort(port);
     rect.addTo(graph);
 
     var rect2 = rect.clone();
@@ -205,13 +284,15 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     rect2.attr("label/text", "Wolrd!");
     rect2.addTo(graph);
 
-    var normallink = new joint.shapes.standard.Link();
+
+    var normallink = new joint.shapes.cep.Link();
+    normallink.attr("label/text", "this is a Link");
     normallink.source(rect);
     normallink.target(rect2);
     normallink.addTo(graph);
 
     var linkView = normallink.findView(paper);
-    linkView.addTools(toolsView);
+    //linkView.addTools(toolsView);
 
     var secondLink = new joint.shapes.standard.Link();
     secondLink.source(rect);
