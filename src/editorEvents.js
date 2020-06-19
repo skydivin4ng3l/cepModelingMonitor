@@ -86,24 +86,24 @@ EditorEvents.init = function (paper, info) {
             }
         }
     })
-    //panning
-    paper.on({
-        'blank:pointerdown': function(evt, x, y) {
-            console.log('dragstart',x,y)
-            let currentScale = this.scale().sx;
-            evt.data = { pan: {x: x * currentScale, y: y * currentScale} };
-        },
-        'blank:pointermove': function(evt, x, y) {
-            console.log('dragcontinue',x,y, evt)
-            let startDrag = evt.data.pan
-            let current = this.translate()
-            console.log('current',current.tx,current.ty, evt)
-            this.translate(startDrag.x - x , startDrag.y - y  )
-        },
-        'blank:pointerup': function(evt) {
-
-        }
-    });
+    // //panning
+    // paper.on({
+    //     'blank:pointerdown': function(evt, x, y) {
+    //         console.log('dragstart',x,y)
+    //         let currentScale = this.scale().sx;
+    //         evt.data = { pan: {x: x * currentScale, y: y * currentScale} };
+    //     },
+    //     'blank:pointermove': function(evt, x, y) {
+    //         console.log('dragcontinue',x,y, evt)
+    //         let startDrag = evt.data.pan
+    //         let current = this.translate()
+    //         console.log('current',current.tx,current.ty, evt)
+    //         this.translate(startDrag.x - x , startDrag.y - y  )
+    //     },
+    //     'blank:pointerup': function(evt) {
+    //
+    //     }
+    // });
 
     //Hotkeys
     $(document).on('keydown', function f(event) {
