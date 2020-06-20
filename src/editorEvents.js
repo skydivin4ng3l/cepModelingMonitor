@@ -153,6 +153,32 @@ EditorEvents.init = function (paper, info) {
         }
     });
 
+    /*// var verticesTool = new joint.linkTools.Vertices();
+    // var segmentsTool = new joint.linkTools.Segments();
+    var sourceArrowheadTool = new joint.linkTools.SourceArrowhead();
+    var targetArrowheadTool = new joint.linkTools.TargetArrowhead();
+    // var sourceAnchorTool = new joint.linkTools.SourceAnchor();
+    // var targetAnchorTool = new joint.linkTools.TargetAnchor();
+    // var boundaryTool = new joint.linkTools.Boundary();
+    var removeButton = new joint.linkTools.Remove();
+
+    var toolsView = new joint.dia.ToolsView({
+        tools: [
+
+            sourceArrowheadTool, targetArrowheadTool,
+
+             removeButton
+        ]
+    });
+
+    paper.on('link:mouseenter', function (linkView) {
+        linkView.addTools(toolsView);
+    });
+
+    paper.on('link:mouseleave', function (linkView) {
+        linkView.removeTools();
+    });*/
+
 
 
     // Attribute Event
@@ -168,6 +194,22 @@ EditorEvents.init = function (paper, info) {
         };
         link.transition('attrs/c1/atConnectionRatio', t, transitionOpt);
         link.transition('attrs/c2/atConnectionRatio', t, transitionOpt);
+    });
+
+    paper.on('myclick:rect', function(linkView,evt) {
+       evt.stopPropagation();
+       var link = linkView.model;
+       var label = link.attr('signText/text');
+       console.log(label);
+       link.attr('signText/text','buuuh');
+    });
+
+    paper.on('monitor:change:source', function(linkView, evt) {
+        evt.stopPropagation();
+        var link = linkView.model;
+        var label = link.attr('streamLabel/text');
+        console.log(label);
+        link.attr('streamLabel/text', 'muhahaha');
     });
 
 }

@@ -174,6 +174,79 @@ export const CustomLink = joint.dia.Link.define('examples.CustomLink',{
     }]
 });
 
+export const CEPLink = joint.dia.Link.define('cep.Link2', {
+    attrs: {
+        line: {
+            connection: true,
+            stroke: '#333333',
+            strokeWidth: 2,
+            strokeLinejoin: 'round',
+            targetMarker: {
+                'type': 'path',
+                'd': 'M 10 -5 0 0 10 5 z'
+            }
+        },
+        wrapper: {
+            connection: true,
+            strokeWidth: 10,
+            strokeLinejoin: 'round'
+        },
+        streamLabel: {
+            fill: 'black',
+            fontSize: 12,
+            textAnchor: 'middle',
+            //textVerticalAnchor: 'middle',
+            // yAlignment: 'middle',
+            xAlignment: 'middle',
+            pointerEvents: 'none',
+            text: 'enter the stream name here',
+            atConnectionRatioIgnoreGradient: 0.5,
+            y: 40,
+        },
+        streamLabelBody: {
+            ref: 'streamLabel',
+            fill: 'white',
+            stroke: 'black',
+            strokeWidth: 2,
+            strokeDasharray: '5 5',
+            refWidth: '120%',
+            refHeight: '120%',
+            // height: 10,
+            // width: 70,
+            // yAlignment: 'middle',
+            xAlignment: 'middle',
+            y: 28,
+            event: 'monitor:change:source',
+            cursor: 'text',
+            atConnectionRatioIgnoreGradient: 0.5,
+        },
+        streamLabelConnector: {
+            atConnectionRatioIgnoreGradient: 0.5,
+            d: 'M 0 0 0 28',
+            stroke: 'black',
+            strokeDasharray: '5 5'
+        }
+    }
+},{
+    markup: [{
+            tagName: 'path',
+            selector: 'line'
+        }, {
+            tagName: 'path',
+            selector: 'wrapper'
+        }, {
+            tagName: 'rect',
+            selector: 'streamLabelBody'
+        }, {
+            tagName: 'text',
+            selector: 'streamLabel',
+        }, {
+            tagName: 'path',
+            selector: 'streamLabelConnector'
+        }
+    ]
+});
+
 // Custom Link
 
 export const AnimatedLink = new joint.dia.Link({

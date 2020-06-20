@@ -1,4 +1,4 @@
-import {CustomLink,AnimatedLink} from "./customlink.js";
+import {CustomLink,AnimatedLink,CEPLink} from "./customlink.js";
 import {EditorEvents} from "./editorEvents.js";
 import {CUSTOMELEMENTS} from "./htmlElement.js";
 
@@ -41,9 +41,9 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             color: 'white'
         },
         snapLinks: true,
-        preventContextMenu: false,
+        // preventContextMenu: false,
         //linkPinning: false,
-        defaultLink: new joint.shapes.cep.Link({
+        defaultLink: new CEPLink() /*joint.shapes.cep.Link({
             defaultLabel: {
                 attrs: {
                     label: {
@@ -52,8 +52,71 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
                 }
             }
 
-        })
+        })*/
     });
+
+    var source = new joint.shapes.standard.Rectangle();
+    source.position(40, 40);
+    source.resize(120, 60);
+    source.attr({
+        body: {
+            fill: 'white',
+            stroke: 'black',
+            strokeWidth: 2
+        },
+        label: {
+            text: 'Hello',
+            fill: 'black'
+        }
+    });
+    source.addTo(graph);
+
+    var target = new joint.shapes.standard.Ellipse();
+    target.position(440, 200);
+    target.resize(120, 60);
+    target.attr({
+        body: {
+            fill: 'white',
+            stroke: 'black',
+            strokeWidth: 2,
+            rx: 60,
+            ry: 30,
+        },
+        label: {
+            text: 'World!',
+            fill: 'black'
+        }
+    });
+    target.addTo(graph);
+
+    var link = new joint.shapes.standard.Link();
+    link.source(source, {
+        anchor: {
+            name: 'center',
+            args: {
+                dx: 30
+            }
+        }
+    });
+    link.target(target, {
+        anchor: {
+            name: 'center',
+            args: {
+                dx: -30
+            }
+        },
+        connectionPoint: {
+            name: 'boundary'
+        }
+    });
+    link.vertices([
+        { x: 130, y: 180 },
+        { x: 400, y: 180 }
+    ]);
+    link.addTo(graph);
+    var linkView = link.findView(paper);
+    linkView.addTools(toolsView);
+
 
     // editorElementToolBar
     var editorElementToolBarGraph = new joint.dia.Graph,
@@ -285,36 +348,35 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     rect2.addTo(graph);
 
 
-    var normallink = new joint.shapes.cep.Link();
-    normallink.attr("label/text", "this is a Link");
-    normallink.source(rect);
-    normallink.target(rect2);
-    normallink.addTo(graph);
+    // var normallink = new joint.shapes.standard.Link();
+    // normallink.source(rect);
+    // normallink.target(rect2);
+    // normallink.addTo(graph);
 
-    var linkView = normallink.findView(paper);
+    // var linkView = normallink.findView(paper);
     //linkView.addTools(toolsView);
 
     var secondLink = new joint.shapes.standard.Link();
     secondLink.source(rect);
     secondLink.target(epa);
     secondLink.addTo(graph);
-    // var link = new CustomLink();
-    // link.attr({
-    //     offsetLabelAbsolute: {
-    //         atConnectionRatioIgnoreGradient: 0.66,
-    //         x: -40,
-    //         y: 80,
-    //         text: 'ignoreGradient: -40,80'
-    //     },
-    //     offsetLabelAbsoluteBody: {
-    //         atConnectionRatioIgnoreGradient: 0.66,
-    //         x: -110, // -40 + -70
-    //         y: 70 // 80 + -10
-    //     }
-    // });
-    // link.source(rect);
-    // link.target(rect2);
-    // link.addTo(graph);
+    var link = new CustomLink();
+    link.attr({
+        offsetLabelAbsolute: {
+            atConnectionRatioIgnoreGradient: 0.66,
+            // x: -40,
+            // y: 80,
+            text: 'ignoreGradient: -40,80'
+        },
+        offsetLabelAbsoluteBody: {
+            atConnectionRatioIgnoreGradient: 0.66,
+            // x: -110, // -40 + -70
+            // y: 70 // 80 + -10
+        }
+    });
+    link.source(rect);
+    link.target(rect2);
+    link.addTo(graph);
 
     socket.on("kafka", function (msg) {
         rect.attr("label/text", msg);
