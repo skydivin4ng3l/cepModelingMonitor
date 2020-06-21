@@ -81,37 +81,33 @@ export const CustomLink = joint.dia.Link.define('examples.CustomLink',{
             textAnchor: 'middle',
             textVerticalAnchor: 'middle',
             fill: 'black',
-            fontSize: 12
+            fontSize: 12,
+            text: 'offsetLabelAbsolute',
+            y: 50,
         },
         offsetLabelAbsoluteBody: {
-            width: 140,
-            height: 20,
+            ref: 'offsetLabelAbsolute',
             fill: 'white',
-            stroke: 'black'
-        },
-        offsetLabelMarker: {
-            atConnectionRatio: 0.66,
-            textAnchor: 'middle',
-            textVerticalAnchor: 'middle',
-            text: 'X',
-            fill: 'red',
             stroke: 'black',
-            strokeWidth: 1.2,
-            fontSize: 30,
-            fontWeight: 'bold'
+            refWidth: '120%',
+            refHeight: '120%',
+            refX: '100%',
+            refY: '100%',
+            event: 'monitor:change:source',
+            cursor: 'text'
         },
-        // offsetLabelPositiveConnector: {
-        //     atConnectionRatio: 0.66,
-        //     d: 'M 0 0 0 40',
-        //     stroke: 'black',
-        //     strokeDasharray: '5 5'
-        // },
-        // offsetLabelNegativeConnector: {
-        //     atConnectionRatio: 0.66,
-        //     d: 'M 0 0 0 -40',
-        //     stroke: 'black',
-        //     strokeDasharray: '5 5'
-        // },
+        offsetLabelPositiveConnector: {
+            atConnectionRatio: 0.66,
+            d: 'M 0 0 0 40',
+            stroke: 'black',
+            strokeDasharray: '5 5'
+        },
+        offsetLabelNegativeConnector: {
+            atConnectionRatio: 0.66,
+            d: 'M 0 0 0 -40',
+            stroke: 'black',
+            strokeDasharray: '5 5'
+        },
         offsetLabelAbsoluteConnector: {
             atConnectionRatioIgnoreGradient: 0.66,
             d: 'M 0 0 -40 80',
@@ -310,6 +306,7 @@ export const AnimatedLink = new joint.dia.Link({
             atConnectionLength: 30,
             textAnchor: 'middle',
             textVerticalAnchor: 'middle',
+            pointerEvents: 'none',
             text: 'Link',
         },
         c1: {

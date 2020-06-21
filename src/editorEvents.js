@@ -206,10 +206,23 @@ EditorEvents.init = function (paper, info) {
 
     paper.on('monitor:change:source', function(linkView, evt) {
         evt.stopPropagation();
+        console.log('i got called');
         var link = linkView.model;
         var label = link.attr('streamLabel/text');
+        $('#container').append(
+            '<div class="streamInput" id="streamInput" style="position:absolute;z-index:100;width:500px;top:50%;left:50%;margin:0 auto 0 -250px;">' +
+            '<form class="streamInputForm" style="position: absolute">' +
+            '<input class="streamInputName" id="streamInputName" type="text" autofocus value="' + label + '" style="width: 100%">' +
+            '<input class="streamInputOk" id="streamInputOk" type="button" value="Ok" style="width: 100%">' +
+            '</form>' +
+            '</div>');
         console.log(label);
-        link.attr('streamLabel/text', 'muhahaha');
+        $('#streamInputOk').on('click.streamNameOk', function() {
+            var newLabel = $('#streamInputName').val();
+            console.log(newLabel);
+            link.attr('streamLabel/text', newLabel);
+            $('#streamInputOk').off('click.streamNameOk');
+            $('#streamInput').remove();
+        })
     });
-
 }
