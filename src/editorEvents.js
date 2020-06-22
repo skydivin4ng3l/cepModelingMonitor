@@ -209,6 +209,35 @@ EditorEvents.init = function (paper, info) {
         console.log('i got called');
         var link = linkView.model;
         var label = link.attr('streamLabel/text');
+        link.appendLabel({
+            markup: [
+                {
+                    tagName: 'circle',
+                    selector: 'body'
+                }
+            ],
+            attrs: {
+                body: {
+                    fill: '#ffffff',
+                    stroke: '#000000',
+                    strokeWidth: 1,
+                    r: 5
+                }
+            },
+            position: {
+                distance: 0
+            }
+        })
+        //get the index dynamically
+        link.transition('labels/1/position/distance',1, {
+            delay: 100,
+            duration: 500,
+            valueFunction: joint.util.interpolate.number,
+            timingFunction: joint.util.timing.linear
+        });
+        link.on('transition:end', function(link){
+            link.removeLabel(1)
+        })
         $('#container').append(
             '<div class="streamInput" id="streamInput" style="position:absolute;z-index:100;width:500px;top:50%;left:50%;margin:0 auto 0 -250px;">' +
             '<form class="streamInputForm" style="position: absolute">' +
@@ -221,6 +250,44 @@ EditorEvents.init = function (paper, info) {
             var newLabel = $('#streamInputName').val();
             console.log(newLabel);
             link.attr('streamLabel/text', newLabel);
+            var canvas = $('#test').append('<canvas id="myCanvas" width="400" height="400" style="position: absolute;z-index:100;width:400px;height:400px;"></canvas> ');
+            var ctx = $('#myCanvas')[0].getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                    datasets: [{
+                        label: '# of Votes',
+                        data: [12, 19, 3, 5, 2, 3],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
             $('#streamInputOk').off('click.streamNameOk');
             $('#streamInput').remove();
         })

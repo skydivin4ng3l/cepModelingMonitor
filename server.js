@@ -14,12 +14,13 @@ var aggregateEvent = require("./src/protos/models/events/Aggregate_pb")
 // import { dirname} from "path";
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = dirname(__filename);
-
+var Chart = require('chart.js');
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 app.use(express.static(__dirname + "/src"));
+app.use("/node_modules", express.static(__dirname + "/node_modules"));
 Subscriber.ini(io, kafka, aggregateEvent);
 
 
