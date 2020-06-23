@@ -1,3 +1,5 @@
+// import { Element } from 'jointjs/src/dia/Element'
+
 export const CUSTOMELEMENTS = new Object()
 CUSTOMELEMENTS.init = function() {
 
@@ -8,7 +10,7 @@ CUSTOMELEMENTS.init = function() {
                 targetMarker: {
                     'type': 'path',
                     'stroke': 'black',
-                    'd': 'M 10 -5 0 0 10 5 z'
+                    'd': 'M 20 -10 0 0 20 10 Z'
                 }
             }
         },
@@ -27,6 +29,7 @@ CUSTOMELEMENTS.init = function() {
                     fill: 'black',
                     fontSize: 12,
                     textAnchor: 'middle',
+                    textVerticalAnchor: 'middle',
                     yAlignment: 'middle',
                     pointerEvents: 'none',
                     text: 'buuuuh',
@@ -52,61 +55,159 @@ CUSTOMELEMENTS.init = function() {
         }
     })
 
+    var foLabelMarkup = {
+        tagName: 'foreignObject',
+        selector: 'foreignObject',
+        attributes: {
+            'overflow': 'hidden'
+        },
+        children: [{
+            tagName: 'div',
+            namespaceURI: 'http://www.w3.org/1999/xhtml',
+            selector: 'htmlContainer',
+            style: {
+                width: '100%',
+                height: '100%',
+                position: 'static',
+                backgroundColor: 'transparent',
+                textAlign: 'center',
+                margin: 0,
+                padding: '0px 5px',
+                boxSizing: 'border-box',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+            },
+            children: [{
+                tagName: 'input',
+                selector: 'textInput',
+            },{
+                tagName: 'select',
+                selector: 'dropdown',
+                children:[{
+                    tagName: 'option',
+                    selector: 'option1',
+                },{
+                    tagName: 'option',
+                    selector: 'option2',
+                }]
+            }
+            ]
+        }]
+    };
 
-    joint.shapes.cep.Element = joint.shapes.basic.Rect.define(
+    joint.shapes.cep.Element = joint.dia.Element.define(
         'cep.Element',
         {
             attrs: {
-                rect: {
-                    stroke: 'green',
+                body: {
                     refWidth: '100%',
                     refHeight: '100%',
-                    fillOpacity: '0',
+                    stroke: '#333333',
+                    fill: '#ffffff',
+                    strokeWidth: 2
                 },
-                '.content': {
-                    text: '',
-                    'ref-x': .5,
-                    'ref-y': .5,
-                    'y-alignment': 'middle',
-                    'x-alignment': 'middle'
+                foreignObject: {
+                    refWidth: '100%',
+                    refHeight: '100%'
+                },
+                htmlContainer: {
+                    id: 'htmlContainer',
+                    style: {
+                        fontSize: 14
+                    }
+                },
+                textInput: {
+                    type: 'text',
+                    value: 'someText',
+                    ref: 'htmlContainer',
+                    style: {
+                        width: '100%'
+                    }
+                },
+                '.':{magnet:false},
+                button: {
+                    cursor: 'pointer',
+                    ref: 'buttonLabel',
+                    refWidth: '150%',
+                    refHeight: '150%',
+                    refX: '-25%',
+                    refY: '-25%',
+                    event: 'element:button:pointerdown',
+                    fill: 'orange',
+                    stroke: 'black',
+                    strokeWidth: 2
+                },
+                buttonLabel: {
+                    pointerEvents: 'none',
+                    ref: 'body',
+                    refX: '-50%',
+                    refY: '-50%',
+                    textAnchor: 'middle',
+                    textVerticalAnchor: 'middle',
+                    text: '＿', // fullwidth underscore
+                    fill: 'black',
+                    fontSize: 8,
+                    fontWeight: 'bold'
+                }
+            },
+            ports: {
+                groups: {
+                    a:{
+                        position: {
+                            name: 'right'
+                        },
+                        attrs: {
+                            '.port-label': {
+                                fill: '#000'
+                            },
+                            '.joint-port-body': {
+                                fill: '#fff',
+                                stroke: '#000',
+                                r: 10,
+                                magnet: true,
+                            }
+                        }
+                    }
                 }
             }
         },{
             markup: [{
-                tagName: 'g',
-                className: 'rotatable',
-                children: [{
-                   tagName: 'g',
-                   className: 'scalable',
-                   children: [{
-                       tagName: 'rect',
-                       selector: 'rect',
-                   },{
-                       tagName: 'foreignObject',
-                       className: 'fobj',
-                       children: [{
-                           tagName: 'body',
-                           namespaceURI: 'http://www.w3.org/1999/xhtml',
-                           children: [{
-                               tagName: 'div',
-                               className: 'content',
-                               selector: 'content',
-                               children: [{
-                                   tagName: 'input',
-                                   attributes: {
-                                       type: 'text',
-                                       value: 'Heyhooooo'
-                                   }
-                               }]
-
-                           }]
-                       }]
-
-                   }]
-                }],
-
+                tagName: 'rect',
+                selector: 'body'
+            }, {
+                tagName: 'rect',
+                selector: 'button'
+            }, {
+                tagName: 'text',
+                selector: 'buttonLabel'
+            }, foLabelMarkup ]
+        }, {
+            initialize: function() {
+                joint.dia.Element.prototype.initialize.apply(this, arguments);
+                console.log(this);
             },
-            ]
+            attributes: {
+                text: {
+                    set: function (text, refBBox, node, attrs) {
+                        // if (node instanceof HTMLElement) {
+                            node.textContent = text;
+
+                        /*} else {
+                            // No foreign object
+                            var style = attrs.style || {};
+                            var wrapValue = {text: text, width: -5, height: '100%'};
+                            var wrapAttrs = joint.util.assign({textVerticalAnchor: 'middle'}, style);
+                            attributes.textWrap.set.call(this, wrapValue, refBBox, node, wrapAttrs);
+                            return {fill: style.color || null};
+                        }*/
+                    },
+                    position: function (text, refBBox, node) {
+                        // No foreign object
+                        if (node instanceof SVGElement) return refBBox.center();
+                    }
+                }
+            }
         }
     )
 
@@ -131,7 +232,7 @@ CUSTOMELEMENTS.init = function() {
     joint.shapes.html.ElementView = joint.dia.ElementView.extend({
 
         template: [
-            '<div class="html-element">',
+            '<div class="html-element" id="test">',
             '<button class="delete">x</button>',
             '<label></label>',
             '<span></span>', '<br/>',

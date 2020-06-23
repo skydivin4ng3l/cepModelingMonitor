@@ -250,7 +250,10 @@ EditorEvents.init = function (paper, info) {
             var newLabel = $('#streamInputName').val();
             console.log(newLabel);
             link.attr('streamLabel/text', newLabel);
-            var canvas = $('#test').append('<canvas id="myCanvas" width="400" height="400" style="position: absolute;z-index:100;width:400px;height:400px;"></canvas> ');
+            var id = link.attr('canvasContainer/id');
+            console.log(id);
+            link.attr('canvasContainer/id', 'newUniqueID');
+            var canvas = $('#newUniqueID').append('<canvas id="myCanvas" width="400" height="400" style="position: absolute;z-index:100;width:400px;height:400px;"></canvas> ');
             var ctx = $('#myCanvas')[0].getContext('2d');
             var myChart = new Chart(ctx, {
                 type: 'bar',
@@ -291,5 +294,22 @@ EditorEvents.init = function (paper, info) {
             $('#streamInputOk').off('click.streamNameOk');
             $('#streamInput').remove();
         })
+    });
+
+    paper.on('element:button:pointerdown', function(elementView, evt) {
+        evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)
+
+        var model = elementView.model;
+
+        if (model.attr('body/visibility') === 'visible') {
+            model.attr('body/visibility', 'hidden');
+            model.attr('label/visibility', 'hidden');
+            model.attr('buttonLabel/text', '＋'); // fullwidth plus
+
+        } else {
+            model.attr('body/visibility', 'visible');
+            model.attr('label/visibility', 'visible');
+            model.attr('buttonLabel/text', '＿'); // fullwidth underscore
+        }
     });
 }
