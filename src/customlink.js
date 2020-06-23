@@ -184,7 +184,7 @@ export const CEPLink = joint.dia.Link.define('cep.Link2', {
         },
         wrapper: {
             connection: true,
-            strokeWidth: 10,
+            strokeWidth: 20,
             strokeLinejoin: 'round'
         },
         streamLabel: {
@@ -221,6 +221,28 @@ export const CEPLink = joint.dia.Link.define('cep.Link2', {
             d: 'M 0 0 0 28',
             stroke: 'black',
             strokeDasharray: '5 5'
+        },
+        streamMonitorBody: {
+            ref: 'streamLabelBody',
+            refWidth: '100%',
+            refHeight: '200%',
+            stroke: '#333333',
+            fill: '#ffffff',
+            xAlignment: 'middle',
+            strokeWidth: 2,
+            y: -28,
+            atConnectionRatioIgnoreGradient:0.5,
+        },
+        foreignObject: {
+            ref: 'streamMonitorBody',
+            refWidth: '100%',
+            refHeight: '100%',
+            xAlignment: 'middle',
+            y: -28,
+            atConnectionRatioIgnoreGradient:0.5,
+        },
+        canvasContainer: {
+            id: 'heyhey',
         }
     }
 },{
@@ -239,6 +261,36 @@ export const CEPLink = joint.dia.Link.define('cep.Link2', {
         }, {
             tagName: 'path',
             selector: 'streamLabelConnector'
+        },{
+            tagName:'rect',
+            selector: 'streamMonitorBody'
+        },{
+        tagName: 'foreignObject',
+        selector: 'foreignObject',
+        attributes: {
+            'overflow': 'hidden'
+        },
+        children: [{
+            tagName: 'div',
+            namespaceURI: 'http://www.w3.org/1999/xhtml',
+            selector: 'canvasContainer',
+            style: {
+                width: '100%',
+                height: '100%',
+                position: 'static',
+                backgroundColor: 'transparent',
+                textAlign: 'center',
+                margin: 0,
+                padding: '0px 5px',
+                boxSizing: 'border-box',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+            },
+            /*attributes: {
+                id: 'myFOContainer'
+            }*/
+        }]
         }
     ]
 });
