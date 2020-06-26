@@ -207,8 +207,8 @@ export const CEPLink = joint.dia.Link.define('cep.Link2', {
             strokeDasharray: '5 5',
             refWidth: '120%',
             refHeight: '120%',
-            // height: 10,
-            // width: 70,
+            // height: 40,
+            // width: 200,
             // yAlignment: 'middle',
             xAlignment: 'middle',
             y: 28,
@@ -223,10 +223,12 @@ export const CEPLink = joint.dia.Link.define('cep.Link2', {
             strokeDasharray: '5 5'
         },
         streamMonitorBody: {
-            ref: 'streamLabelBody',
-            refWidth: '100%',
-            refHeight: '200%',
-            stroke: '#333333',
+            // ref: 'streamLabelBody',
+            // refWidth: '100%',
+            // refHeight: '200%',
+            height: 40,
+            width: 200,
+            // stroke: '#333333',
             fill: '#ffffff',
             xAlignment: 'middle',
             strokeWidth: 2,
@@ -242,7 +244,7 @@ export const CEPLink = joint.dia.Link.define('cep.Link2', {
             atConnectionRatioIgnoreGradient:0.5,
         },
         canvasContainer: {
-            id: 'heyhey',
+            /*id: ,*/
         }
     }
 },{
@@ -268,7 +270,7 @@ export const CEPLink = joint.dia.Link.define('cep.Link2', {
         tagName: 'foreignObject',
         selector: 'foreignObject',
         attributes: {
-            'overflow': 'hidden'
+            'overflow': 'visible'
         },
         children: [{
             tagName: 'div',
@@ -281,7 +283,7 @@ export const CEPLink = joint.dia.Link.define('cep.Link2', {
                 backgroundColor: 'transparent',
                 textAlign: 'center',
                 margin: 0,
-                padding: '0px 5px',
+                padding: '0px 0px',
                 boxSizing: 'border-box',
                 display: 'flex',
                 alignItems: 'center',
