@@ -1,3 +1,5 @@
+import {MonitorSubscriptionManager} from './monitorSubscriptionManager.js';
+
 export const EditorEvents = new Object();
 EditorEvents.init = function (paper, info) {
 
@@ -209,7 +211,7 @@ EditorEvents.init = function (paper, info) {
         console.log('i got called');
         var link = linkView.model;
         var label = link.attr('streamLabel/text');
-        link.appendLabel({
+        /*link.appendLabel({
             markup: [
                 {
                     tagName: 'circle',
@@ -237,7 +239,8 @@ EditorEvents.init = function (paper, info) {
         });
         link.on('transition:end', function(link){
             link.removeLabel(1)
-        })
+        })*/
+        //To the page
         $('#container').append(
             '<div class="streamInput" id="streamInput" style="position:absolute;z-index:100;width:500px;top:50%;left:50%;margin:0 auto 0 -250px;">' +
             '<form class="streamInputForm" style="position: absolute">' +
@@ -250,12 +253,91 @@ EditorEvents.init = function (paper, info) {
             var newLabel = $('#streamInputName').val();
             console.log(newLabel);
             link.attr('streamLabel/text', newLabel);
-            var id = link.attr('canvasContainer/id');
+            MonitorSubscriptionManager.registerConsumer(link);
+
+            /*var id = link.attr('canvasContainer/id');
             console.log(id);
-            link.attr('canvasContainer/id', 'newUniqueID');
-            var canvas = $('#newUniqueID').append('<canvas id="myCanvas" width="400" height="400" style="position: absolute;z-index:100;width:400px;height:400px;"></canvas> ');
-            var ctx = $('#myCanvas')[0].getContext('2d');
-            var myChart = new Chart(ctx, {
+            if( id == null) {
+                id = joint.util.uuid();
+            }
+
+            console.log(id);
+            link.attr('canvasContainer/id', id);
+
+            var canvasContainer = $('#'+id+'').append('<canvas width="200" height="40" style="position: absolute;z-index:100;width:200px;height:40px;"></canvas> ');
+            // var canvasId = canvasContainer.children('canvas').attr('id')
+            var ctx = canvasContainer.children('canvas')[0].getContext('2d');
+
+            // var ctx = $('#'+canvasId+'')[0].getContext('2d');
+            /!* Chart Configuration *!/
+            var chartConfig = {
+                type : 'line',
+                data : {
+                    labels : [5,10,15,20,25,30,35,40,45,50,55,60],
+                    datasets : [ {
+                        // label : 'EventCountPer5Sec',
+                        backgroundColor : 'rgb(255, 99, 132)',
+                        borderColor : 'rgb(255, 99, 132)',
+                        data : [5,0,17,5,0],
+                        fill : false
+                    } ]
+                },
+                options : {
+                    legend: {
+                        display: false
+                    },
+                    responsive : true,
+                    title : {
+                        display : false,
+                        text : 'EventCountPer5Sec'
+                    },
+                    tooltips : {
+                        mode : 'index',
+                        // intersect : false,
+                        axis: 'y'
+                    },
+                    // hover : {
+                    //     mode : 'nearest',
+                    //     intersect : true
+                    // },
+                    scales : {
+                        xAxes : [ {
+                            display : true,
+                            // type : 'category',
+                            // time : {
+                            //     displayFormats : {
+                            //         second : 'ss'
+                            //     },
+                            // },
+                            // distribution: 'series',
+                            scaleLabel : {
+                                display : false,
+                                labelString : 'seconds',
+                                padding: 0,
+                            },
+                            ticks: {
+                                beginAtZero: false,
+                                max: 60,
+                                min: 0,
+                                stepSize: 10,
+                                autoSkip: true,
+                                maxTicks: 6
+                            }
+                        } ],
+                        yAxes : [ {
+                            display : true,
+                            scaleLabel : {
+                                display : false,
+                                padding: 0,
+                                // labelString : 'Value'
+                            },
+
+                        } ]
+                    }
+                }
+            };
+
+            var myChart = new Chart(ctx, chartConfig /!*{
                 type: 'bar',
                 data: {
                     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
@@ -290,7 +372,7 @@ EditorEvents.init = function (paper, info) {
                         }]
                     }
                 }
-            });
+            }*!/);*/
             $('#streamInputOk').off('click.streamNameOk');
             $('#streamInput').remove();
         })
