@@ -1,105 +1,109 @@
 // import kafka from "kafka-node";
 // import socket from "socket.io"
 // import protobuf from "protobufjs"
+import * as constants from "./constants.js"
 export const MonitorSubscriptionManager = new Object();
 MonitorSubscriptionManager.registry = new Object({
     streamToLinksLookup: new Map(),
     linkRegister: new Map(),
 }) ;
-MonitorSubscriptionManager.startListener = function() {
-    socket.on("kafka", function (msg) {
-        console.log(msg);
+MonitorSubscriptionManager.startListeners = function() {
+    socket.on("kafkaMonitor", function (kafkaMessage) {
+        console.log(kafkaMessage);
+        MonitorSubscriptionManager.distributeEvents(kafkaMessage, false);
+    });
+    socket.on("kafkaAggregated", function (kafkaMessage) {
+        console.log(kafkaMessage);
+        MonitorSubscriptionManager.distributeEvents(kafkaMessage, true);
     });
 }
-// Subscriber.ini = function (io, kafka, aggregateEvent) {
-//
-//
-//
-//     // const io = socket(server);
-//     const client = new kafka.KafkaClient({ kafkaHost: "localhost:29092" });
-//     const admin = new kafka.Admin(client);
-//     var topics = [{
-//         topic: 'MONITOR_AGGREGATED_liveTrainDataStream',
-//         partitions: 1,
-//         replicationFactor: 1
-//     }];
-//     admin.createTopics(topics, (err, res) => {
-//         // result is an array of any errors if a given topic could not be created
-//         console.log('creatingTopics',res)
-//     });
-//     admin.listTopics((err, res) => {
-//         console.log('topics', res);
-//     });
-//     try {
-//         Consumer = kafka.Consumer;
-//         consumer = new Consumer(client, [{ topic: "MONITOR_AGGREGATED_liveTrainDataStream", partition: 0/*, offset: 0*/ }], {
-//             autocommit: false,
-//             encoding: 'buffer',
-//             // keyEncoding: 'utf8',
-//             fromOffset: 'latest'/*true*/,
-//         });
-//     } catch (e) {
-//         console.log(e)
-//     }
-//
-//
-//
-//     consumer.on("message", function (message) {
-//         console.log("message",message);
-//         var buf = Buffer.from(message.value, 'binary');
-//
-//         var decodedMessage = aggregateEvent.Aggregate.deserializeBinary(buf);
-//         console.log("decodedMessage",decodedMessage)
-//         console.log(message.topic,"value",decodedMessage.getVolume())
-//
-//         io.emit("kafka", decodedMessage.getVolume());
-//
-//     });
-//
-//     io.on("connection", (socket) => {
-//         console.log("a user connected");
-//         socket.on("disconnect", () => {
-//             console.log("user disconnected");
-//         });
-//         socket.on("chat message", (msg) => {
-//             console.log("message: " + msg);
-//         });
-//         socket.on('registerConsumer',(link) =>{
-//             console.log("link: " + link);
-//             this.registerConsumer(link);
-//         })
-//     });
-//     io.on("connection", (socket) => {
-//         socket.on("chat message", (msg) => {
-//             io.emit("chat message", msg);
-//         });
-//     });
-// }
-MonitorSubscriptionManager.registerConsumer = function (link ) {
-    var id = link.attr('canvasContainer/id');
-    console.log(id);
-    if( id == null) {
-        id = joint.util.uuid();
+MonitorSubscriptionManager.distributeEvents = function(kafkaMessage, aggregated) {
+    let topic = kafkaMessage.topic;
+    // let aggregated = topic.startsWith(constants.AGGREGATED_PREFIX);
+    let topicSuffix;
+    if( aggregated ) {
+        topicSuffix = topic.replace(constants.AGGREGATED_PREFIX,"")
+    } else {
+        topicSuffix = topic.replace(constants.MONITORING_PREFIX,"")
+    }
+    let subScribedLinks = this.registry.streamToLinksLookup.get(topicSuffix)
+    if (aggregated) {
+        for(let linkKey of subScribedLinks) {
+            this.processAggregationEvent(linkKey,kafkaMessage.value);
+        }
+    } else {
+        for(let linkKey of subScribedLinks) {
+            this.processMonitorEvent(linkKey)
+        }
     }
 
-    console.log(id);
-    link.attr('canvasContainer/id', id);
-    //TODO check if Link Already has a canvas
-    var canvasContainer = $('#'+id+'').append('<canvas width="200" height="40" style="position: absolute;z-index:100;width:200px;height:40px;"></canvas> ');
-    // var canvasId = canvasContainer.children('canvas').attr('id')
-    var ctx = canvasContainer.children('canvas')[0].getContext('2d');
+}
+MonitorSubscriptionManager.processAggregationEvent= function(linkKey,eventCount) {
+    let monitorObject = this.registry.linkRegister.get(linkKey)
+    monitorObject.chart.config.data.datasets.forEach((dataset) =>{
+        //TODO think about labels and order
+        let length = dataset.data.length;
+        let labelArray = [5,10,15,20,25,30,35,40,45,50,55,60]
+        if (length >= 12) {
+            dataset.data.shift()
+        } else {
+            monitorObject.chart.config.data.labels.unshift(labelArray[length])
+        }
+        dataset.data.push(eventCount)
+    })
+    monitorObject.chart.update();
+}
+MonitorSubscriptionManager.processMonitorEvent= function(linkKey) {
+    let monitorObject = this.registry.linkRegister.get(linkKey)
+    monitorObject.link.appendLabel({
+        markup: [
+            {
+                tagName: 'circle',
+                selector: 'body'
+            }
+        ],
+        attrs: {
+            body: {
+                fill: '#ffffff',
+                stroke: '#000000',
+                strokeWidth: 1,
+                r: 5
+            }
+        },
+        position: {
+            distance: 0
+        }
+    });
+    let labelIndex = monitorObject.link.labels().length -1;
+    let endOfPath = 1; //distance parameter [0-1]
+    monitorObject.link.transition('labels/' + labelIndex + '/position/distance',endOfPath, {
+        delay: 200,
+        duration: 1000,
+        valueFunction: joint.util.interpolate.number,
+        timingFunction: joint.util.timing.linear
+    });
 
-    // var ctx = $('#'+canvasId+'')[0].getContext('2d');
+}
+MonitorSubscriptionManager.initChart= function(canvasContainerId) {
+    let canvasContainer = $('#'+canvasContainerId+'');
+    let canvasArray = canvasContainer.children('canvas')
+    if(canvasArray.length === 0 /*!canvasContainer.has('canvas')*/) {
+        canvasContainer.append('<canvas width="200" height="40" style="position: absolute;z-index:100;width:200px;height:40px;"></canvas> ');
+    } else {
+        console.warn("Already has Canvas: "+ canvasContainerId)
+    }
+    let ctx = canvasContainer.children('canvas')[0].getContext('2d');
+
     /* Chart Configuration */
-    var chartConfig = {
+    let chartConfig = {
         type : 'line',
         data : {
-            labels : [5,10,15,20,25,30,35,40,45,50,55,60],
+            labels : []/*[5,10,15,20,25,30,35,40,45,50,55,60]*/,
             datasets : [ {
                 // label : 'EventCountPer5Sec',
                 backgroundColor : 'rgb(255, 99, 132)',
                 borderColor : 'rgb(255, 99, 132)',
-                data : [5,0,17,5,0],
+                data : [],
                 fill : false
             } ]
         },
@@ -115,7 +119,7 @@ MonitorSubscriptionManager.registerConsumer = function (link ) {
             tooltips : {
                 mode : 'index',
                 // intersect : false,
-                axis: 'y'
+                axis: 'x'
             },
             // hover : {
             //     mode : 'nearest',
@@ -141,8 +145,9 @@ MonitorSubscriptionManager.registerConsumer = function (link ) {
                         max: 60,
                         min: 0,
                         stepSize: 10,
-                        autoSkip: true,
-                        maxTicks: 6
+                        autoSkip: false,
+                        maxTicks: 6,
+                        mirror: true,
                     }
                 } ],
                 yAxes : [ {
@@ -152,51 +157,47 @@ MonitorSubscriptionManager.registerConsumer = function (link ) {
                         padding: 0,
                         // labelString : 'Value'
                     },
-
                 } ]
             }
         }
     };
 
-    var myChart = new Chart(ctx, chartConfig );
-    var myMonitorObject = {
+    let myChart = new Chart(ctx, chartConfig );
+    return myChart
+}
+MonitorSubscriptionManager.registerConsumer = function (link ) {
+    let canvasContainerId = link.attr('canvasContainer/id');
+    console.log(canvasContainerId);
+    let myChart;
+    let myMonitorObject = new Object();
+    if( canvasContainerId == null) {
+        canvasContainerId = joint.util.uuid();
+        console.log(canvasContainerId);
+        link.attr('canvasContainer/id', canvasContainerId);
+        myChart = this.initChart(canvasContainerId)
+    } /*else {
+        //TODO check for already Registered MonitorObject
+        if(this.registry.linkRegister.has(canvasContainerId)){
+            myMonitorObject = this.registry.linkRegister.get(canvasContainerId)
+
+        } else {
+            //no object registered
+            myChart = this.initChart(canvasContainerId)
+        }
+    }*/
+
+    //TODO check if Link Already has a canvas
+
+    myMonitorObject = {
         streamName: link.attr('streamLabel/text'),
         chart: myChart,
         link: link,
     }
     this.registerMonitorObject(myMonitorObject);
 
-    socket.emit('registerConsumer', link.attr('streamLabel/text'));
-    //TODO do this differently
-    socket.on(link.attr('streamLabel/text'), (kafkaEvent) => {
-        console.log(kafkaEvent);
-        link.appendLabel({
-            markup: [
-                {
-                    tagName: 'circle',
-                    selector: 'body'
-                }
-            ],
-            attrs: {
-                body: {
-                    fill: '#ffffff',
-                    stroke: '#000000',
-                    strokeWidth: 1,
-                    r: 5
-                }
-            },
-            position: {
-                distance: 0
-            }
-        });
-        let labelIndex = link.labels().length;
-        link.transition('labels/' + labelIndex + '/position/distance',1, {
-            delay: 100,
-            duration: 500,
-            valueFunction: joint.util.interpolate.number,
-            timingFunction: joint.util.timing.linear
-        });
-    });
+}
+MonitorSubscriptionManager.updateMonitorObjectRegistry = function(link) {
+
 }
 
 MonitorSubscriptionManager.registerLinkKeyOnStreamLookup = function (linkKey, newStreamName) {
@@ -208,29 +209,43 @@ MonitorSubscriptionManager.registerLinkKeyOnStreamLookup = function (linkKey, ne
 MonitorSubscriptionManager.registerMonitorObject = function (monitorObject) {
     let linkKey = monitorObject.link.attr('canvasContainer/id');
     let newStreamName = monitorObject.streamName;
+    let oldStreamName;
     if(this.registry.linkRegister.has(linkKey)) {
         //Link is already registered
-        //TODO Update StreamToLinkLookup
         let oldMonitorObject = this.registry.linkRegister.get(linkKey);
-        if (oldMonitorObject.streamName != newStreamName) {
+        oldStreamName = oldMonitorObject.streamName;
+        if (oldStreamName !== newStreamName) {
             if (this.registry.streamToLinksLookup.has(newStreamName)) {
                 // new Stream is already subscribed by someone
                 let streamLinkSet = this.registry.streamToLinksLookup.get(newStreamName);
                 if(!streamLinkSet.has(linkKey)) {
                     // but not by this link
                     streamLinkSet.add(linkKey)
-                    let oldStreamLinkSet = this.registry.streamToLinksLookup.get(oldMonitorObject.streamName);
+                    this.unregisterLinkFromStream(linkKey,oldStreamName)
+                    /*let oldStreamLinkSet = this.registry.streamToLinksLookup.get(oldStreamName);
                     oldStreamLinkSet.delete(linkKey)
+                    socket.emit('deleteConsumer', oldStreamName);*/
+                    socket.emit('registerConsumer', newStreamName);
+                } else {
+                    //No need to change
                 }
             } else {
                 // new Stream is not already subscribed by anyone
                 this.registerLinkKeyOnStreamLookup(linkKey, newStreamName)
+                this.unregisterLinkFromStream(linkKey,oldStreamName)
+                /*let oldStreamLinkSet = this.registry.streamToLinksLookup.get(oldStreamName);
+                oldStreamLinkSet.delete(linkKey)
+                socket.emit('deleteConsumer', oldStreamName);*/
+                socket.emit('registerConsumer', newStreamName);
             }
+        } else {
+            //No need to change
         }
     } else {
         //Link gets registered the first time
         this.registerLinkKeyOnStreamLookup(linkKey, newStreamName)
-        //this should be initiated only once
+        socket.emit('registerConsumer', newStreamName);
+        //this should be initiated only once per link
         monitorObject.link.on('transition:end', function(link){
             //0 is default label
             //the 1 is always the label that finishes first
@@ -238,5 +253,10 @@ MonitorSubscriptionManager.registerMonitorObject = function (monitorObject) {
         })
     }
     this.registry.linkRegister.set(linkKey,monitorObject)
+}
+MonitorSubscriptionManager.unregisterLinkFromStream = function (linkKey, oldStreamName) {
+    let oldStreamLinkSet = this.registry.streamToLinksLookup.get(oldStreamName);
+    oldStreamLinkSet.delete(linkKey)
+    socket.emit('deleteConsumer', oldStreamName);
 }
 // module.exports = Subscriber;

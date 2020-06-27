@@ -3,6 +3,8 @@ import {MonitorSubscriptionManager} from './monitorSubscriptionManager.js';
 export const EditorEvents = new Object();
 EditorEvents.init = function (paper, info) {
 
+    MonitorSubscriptionManager.startListeners();
+
     paper.on('blank:mouseover', function() {
         resetAll(this);
 
