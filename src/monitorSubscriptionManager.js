@@ -2,6 +2,7 @@
 // import socket from "socket.io"
 // import protobuf from "protobufjs"
 import * as constants from "./constants.js"
+// import moment from "moment"
 export const MonitorSubscriptionManager = new Object();
 MonitorSubscriptionManager.registry = new Object({
     streamToLinksLookup: new Map(),
@@ -24,12 +25,14 @@ MonitorSubscriptionManager.distributeEvents = function(kafkaMessage, aggregated)
     if( aggregated ) {
         topicSuffix = topic.replace(constants.AGGREGATED_PREFIX,"")
     } else {
-        topicSuffix = topic.replace(constants.MONITORING_PREFIX,"")
+        topicSuffix = topic.replace(constants.MONITOR_PREFIX,"")
     }
     let subScribedLinks = this.registry.streamToLinksLookup.get(topicSuffix)
     if (aggregated) {
         for(let linkKey of subScribedLinks) {
             this.processAggregationEvent(linkKey,kafkaMessage.value);
+            //testing purposes only
+            this.processMonitorEvent(linkKey)
         }
     } else {
         for(let linkKey of subScribedLinks) {
@@ -43,13 +46,17 @@ MonitorSubscriptionManager.processAggregationEvent= function(linkKey,eventCount)
     monitorObject.chart.config.data.datasets.forEach((dataset) =>{
         //TODO think about labels and order
         let length = dataset.data.length;
-        let labelArray = [5,10,15,20,25,30,35,40,45,50,55,60]
+        // let labelArray = [5,10,15,20,25,30,35,40,45,50,55,60]
         if (length >= 12) {
             dataset.data.shift()
-        } else {
+        } /*else {
             monitorObject.chart.config.data.labels.unshift(labelArray[length])
-        }
-        dataset.data.push(eventCount)
+        }*/
+        dataset.data.push(
+            {
+                x: new Date(),
+                y: eventCount,
+            })
     })
     monitorObject.chart.update();
 }
@@ -88,7 +95,7 @@ MonitorSubscriptionManager.initChart= function(canvasContainerId) {
     let canvasContainer = $('#'+canvasContainerId+'');
     let canvasArray = canvasContainer.children('canvas')
     if(canvasArray.length === 0 /*!canvasContainer.has('canvas')*/) {
-        canvasContainer.append('<canvas width="200" height="40" style="position: absolute;z-index:100;width:200px;height:40px;"></canvas> ');
+        canvasContainer.append('<canvas width="200" height="60" style="position: absolute;z-index:100;width:200px;height:60px;"></canvas> ');
     } else {
         console.warn("Already has Canvas: "+ canvasContainerId)
     }
@@ -104,7 +111,7 @@ MonitorSubscriptionManager.initChart= function(canvasContainerId) {
                 backgroundColor : 'rgb(255, 99, 132)',
                 borderColor : 'rgb(255, 99, 132)',
                 data : [],
-                fill : false
+                fill : true
             } ]
         },
         options : {
@@ -128,12 +135,12 @@ MonitorSubscriptionManager.initChart= function(canvasContainerId) {
             scales : {
                 xAxes : [ {
                     display : true,
-                    // type : 'category',
-                    // time : {
-                    //     displayFormats : {
-                    //         second : 'ss'
-                    //     },
-                    // },
+                    type : 'time',
+                    time : {
+                        displayFormats : {
+                            second : 'm:ss'
+                        },
+                    },
                     // distribution: 'series',
                     scaleLabel : {
                         display : false,
@@ -142,12 +149,14 @@ MonitorSubscriptionManager.initChart= function(canvasContainerId) {
                     },
                     ticks: {
                         beginAtZero: false,
-                        max: 60,
+                        /*max: 60,
                         min: 0,
                         stepSize: 10,
-                        autoSkip: false,
-                        maxTicks: 6,
+                        autoSkip: false,*/
+                        maxTicks: 3,
                         mirror: true,
+                        source: 'data',
+                        autoSkip: true,
                     }
                 } ],
                 yAxes : [ {
@@ -157,6 +166,13 @@ MonitorSubscriptionManager.initChart= function(canvasContainerId) {
                         padding: 0,
                         // labelString : 'Value'
                     },
+                    ticks:{
+                        beginAtZero: true,
+                        autoSkip: true,
+                        source: 'data',
+                        stepSize: 5,
+                        maxTicks: 3,
+                    }
                 } ]
             }
         }
@@ -249,7 +265,7 @@ MonitorSubscriptionManager.registerMonitorObject = function (monitorObject) {
         monitorObject.link.on('transition:end', function(link){
             //0 is default label
             //the 1 is always the label that finishes first
-            link.removeLabel(1)
+            //link.removeLabel(1)
         })
     }
     this.registry.linkRegister.set(linkKey,monitorObject)

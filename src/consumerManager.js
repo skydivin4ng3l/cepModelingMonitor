@@ -2,11 +2,15 @@
 // import socket from "socket.io"
 var kafka = require("kafka-node");
 var aggregateEvent = require("./protos/models/events/Aggregate_pb");
+// var constants = require("./constants.js");
 var io;
+const AGGREGATED_PREFIX = "MONITOR_AGGREGATED_";
+const MONITOR_PREFIX = "MONITOR_";
 const ConsumerManager = new Object();
 ConsumerManager.clients = new Object();
 ConsumerManager.consumer = new Object();
 ConsumerManager.subscribedTopics = new Map();
+ConsumerManager.offsetsSubscribedTopics = new Map();
 ConsumerManager.ini = function (http) {
 
     io = require("socket.io")(http);
@@ -15,9 +19,10 @@ ConsumerManager.ini = function (http) {
     this.clients.admin = new kafka.KafkaClient({ kafkaHost: "localhost:29092" });
     this.clients.monitor = new kafka.KafkaClient({ kafkaHost: "localhost:29092" });
     this.clients.aggregate = new kafka.KafkaClient({ kafkaHost: "localhost:29092" });
+    this.clients.offset = new kafka.KafkaClient({ kafkaHost: "localhost:29092" });
 
     this.consumer.admin = new kafka.Admin(this.clients.admin);
-
+    this.consumer.offset = new kafka.Offset(this.clients.offset);
     /*var topics = [{
         topic: 'MONITOR_AGGREGATED_liveTrainDataStream',
         partitions: 1,
@@ -108,12 +113,30 @@ ConsumerManager.removeTopic = function(topicSuffix) {
     })
 }
 ConsumerManager.initConsumers = function() {
-    //initialize with the first topic
-    this.initAggregateConsumer();
-    this.initMonitorConsumer();
+    //TODO extract method update topic offsets
+    let topics = [];
+    for( let topicSuffix of this.subscribedTopics.keys() ) {
+        topics.push(AGGREGATED_PREFIX + topicSuffix);
+        topics.push(MONITOR_PREFIX + topicSuffix);
+    }
+    this.consumer.offset.fetchLatestOffsets( topics, function (error, offsets) {
+        if(error) {
+            console.warn(error)
+        }
+        console.log(offsets)
+        let partition = 0;
+        for (let topic of topics) {
+            ConsumerManager.offsetsSubscribedTopics.set(topic,offsets[topic][partition])
+        }
+        //initialize with the first topic
+        ConsumerManager.initAggregateConsumer();
+        ConsumerManager.initMonitorConsumer();
+    })
+
 
 }
 ConsumerManager.addConsumer = function(topicSuffix) {
+    //TODO update latest topics first
     this.initTopic(topicSuffix);
     this.consumer.monitor.addTopics([{topic: 'MONITOR_' + topicSuffix }], function (err, added) {
         if(err) {
@@ -169,8 +192,9 @@ ConsumerManager.initAggregateConsumer = function() {
     let fetchRequests = new Array()
     for(let topic of this.subscribedTopics.keys()) {
         fetchRequests.push({
-            topic: "MONITOR_AGGREGATED_" + topic,
+            topic: AGGREGATED_PREFIX + topic,
             partition: 0,
+            offset: this.offsetsSubscribedTopics.get(AGGREGATED_PREFIX + topic),
         })
     }
     try {
@@ -183,7 +207,7 @@ ConsumerManager.initAggregateConsumer = function() {
             // autoCommitIntervalMs: 5000,
             encoding: 'buffer',
             // keyEncoding: 'utf8',
-            fromOffset: 'latest'/*true*/,
+            fromOffset: /*'latest'*/true,
             });
     } catch (e) {
         console.log(e)
