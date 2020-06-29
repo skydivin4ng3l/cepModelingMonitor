@@ -4,7 +4,7 @@ export const CUSTOMELEMENTS = new Object()
 CUSTOMELEMENTS.init = function() {
 
     joint.shapes.cep = {};
-    joint.shapes.cep.Link =joint.dia.Link.define('cep.Link',{
+    /*joint.shapes.cep.Link =joint.dia.Link.define('cep.Link',{
         attrs: {
             line: {
                 targetMarker: {
@@ -53,7 +53,7 @@ CUSTOMELEMENTS.init = function() {
                 offset: 20,
             }
         }
-    })
+    })*/
 
     var foLabelMarkup = {
         tagName: 'foreignObject',
@@ -181,12 +181,30 @@ CUSTOMELEMENTS.init = function() {
             }, {
                 tagName: 'text',
                 selector: 'buttonLabel'
-            }, foLabelMarkup ]
-        }, {
+            }, foLabelMarkup ],
+
             initialize: function() {
                 joint.dia.Element.prototype.initialize.apply(this, arguments);
                 console.log(this);
+                let htmlContainerId = joint.util.uuid();
+                this.attr('htmlContainer/id', htmlContainerId);
+                let htmlContainerElement = $('#'+ htmlContainerId);
+                htmlContainerElement.append([
+                    '<div class="html-element" id="test">',
+                    '<button class="delete">x</button>',
+                    '<label></label>',
+                    '<span></span>', '<br/>',
+                    '<select><option>--</option><option>one</option><option>two</option></select>',
+                    '<input type="text" value="I\'m HTML input" />',
+                    '</div>'
+                ].join(''));
+
+                htmlContainerElement.find('input,select').on('mousedown click', function(evt) {
+                    evt.stopPropagation();
+                });
             },
+        }, {
+
             attributes: {
                 text: {
                     set: function (text, refBBox, node, attrs) {
@@ -211,7 +229,31 @@ CUSTOMELEMENTS.init = function() {
         }
     )
 
-
+    joint.shapes.cep.ElementView = joint.dia.ElementView.extend({
+        initialize: function () {
+            joint.dia.ElementView.prototype.initialize.apply(this,arguments);
+            console.log('elementView Initialize got called');
+        },
+        render: function () {
+            joint.dia.ElementView.prototype.render.apply(this,arguments);
+            console.log('elementView render got called');
+            let model = this.model
+            let htmlContainerId = model.attr('htmlContainer/id');
+            let htmlContainerElement = $('#'+ htmlContainerId);
+            htmlContainerElement.append([
+                '<div class="html-element" id="test">',
+                '<button class="delete">x</button>',
+                '<label></label>',
+                '<span></span>', '<br/>',
+                '<select><option>--</option><option>one</option><option>two</option></select>',
+                '<input type="text" value="I\'m HTML input" />',
+                '</div>'
+            ].join(''));
+            htmlContainerElement.find('input,select').on('mousedown click', function(evt) {
+                evt.stopPropagation();
+            });
+        }
+    })
     // Create a custom element.
     // ------------------------
 
