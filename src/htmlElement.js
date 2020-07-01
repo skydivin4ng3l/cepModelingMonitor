@@ -188,12 +188,12 @@ CUSTOMELEMENTS.init = function() {
                 }
             },
             template: [
-                '<div class="html-element" id="test">',
-                '<button class="delete">x</button>',
-                '<label></label>',
-                '<span></span>', '<br/>',
-                '<select><option>--</option><option>one</option><option>two</option></select>',
-                '<input type="text" value="I\'m HTML input" />',
+                '<div class="epa-element" >',
+                '<h4 style="background: darkorange"> EPA </h4>',
+                '<form>',
+                '<label for="epaName">EPAName:</label>',
+                '<input type="text" id="epaName" name="epaName"><br>',
+                '</form>',
                 '</div>'
             ].join(''),
         },{
@@ -256,6 +256,14 @@ CUSTOMELEMENTS.init = function() {
             this.$template.find('select').on('change', _.bind(function(evt) {
                 this.model.set($(evt.target).attr('name'), $(evt.target).val());
             }, this));
+            let model = this.model;
+            this.$template.find('input,select').each(function(){
+                let currentElementName = $(this).attr('name');
+                let modelValueForName = model.get(currentElementName)
+                if (typeof modelValueForName !== 'undefined' ) {
+                    $(this).val(modelValueForName)
+                }
+            })
         },
         render: function () {
             joint.dia.ElementView.prototype.render.apply(this,arguments);
