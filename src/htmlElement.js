@@ -245,6 +245,17 @@ CUSTOMELEMENTS.init = function() {
         initialize: function () {
             joint.dia.ElementView.prototype.initialize.apply(this,arguments);
             console.log('elementView Initialize got called');
+            this.$template = $(_.template(this.model.get('template'))());
+            this.$template.find('input,select').on('mousedown click', function(evt) {
+                evt.stopPropagation();
+            });
+            // This is an example of reacting on the input change and storing the input data in the cell model.
+            this.$template.find('input').on('change', _.bind(function(evt) {
+                this.model.set($(evt.target).attr('name')/*'input'*/, $(evt.target).val());
+            }, this));
+            this.$template.find('select').on('change', _.bind(function(evt) {
+                this.model.set($(evt.target).attr('name'), $(evt.target).val());
+            }, this));
         },
         render: function () {
             joint.dia.ElementView.prototype.render.apply(this,arguments);
@@ -252,10 +263,11 @@ CUSTOMELEMENTS.init = function() {
             let model = this.model
             let htmlContainerId = model.attr('htmlContainer/id');
             let htmlContainerElement = $('#'+ htmlContainerId);
-            htmlContainerElement.append(model.get('template'));
-            htmlContainerElement.find('input,select').on('mousedown click', function(evt) {
+            htmlContainerElement.append(this.$template/*model.get('template')*/);
+            /*htmlContainerElement.find('input,select').on('mousedown click', function(evt) {
                 evt.stopPropagation();
-            });
+            });*/
+            return this
         }
     })
     // Create a custom element.
@@ -283,7 +295,7 @@ CUSTOMELEMENTS.init = function() {
             '<label></label>',
             '<span></span>', '<br/>',
             '<select><option>--</option><option>one</option><option>two</option></select>',
-            '<input type="text" value="I\'m HTML input" />',
+            '<input type="text" name="htmlInput" value="I\'m HTML input" />',
             '</div>'
         ].join(''),
 
@@ -298,7 +310,7 @@ CUSTOMELEMENTS.init = function() {
             });
             // This is an example of reacting on the input change and storing the input data in the cell model.
             this.$box.find('input').on('change', _.bind(function(evt) {
-                this.model.set('input', $(evt.target).val());
+                this.model.set($(evt.target).attr('name')/*'input'*/, $(evt.target).val());
             }, this));
             this.$box.find('select').on('change', _.bind(function(evt) {
                 this.model.set('select', $(evt.target).val());
