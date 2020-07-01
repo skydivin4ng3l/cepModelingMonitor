@@ -161,12 +161,18 @@ CUSTOMELEMENTS.init = function() {
                             '.port-label': {
                                 fill: '#000'
                             },
-                            '.joint-port-body': {
-                                fill: '#fff',
+                            rect: {
+                                /*fill: 'red',*/
                                 stroke: '#000',
                                 magnet: true,
                             }
-                        }
+                        },
+                        label: {
+                            position: {
+                                name: 'bottom',
+                                args: {x: 15} // extra arguments for the label layout function, see `layout.PortLabel` section
+                            },
+                        },
                     },
                     in: {
                         position: {
@@ -176,14 +182,20 @@ CUSTOMELEMENTS.init = function() {
                             '.port-label': {
                                 fill: '#000'
                             },
-                            '.joint-port-body': {
+                            circle: {
                                 fill: '#fff',
                                 stroke: '#000',
                                 r: 10,
                                 cx: -10,
                                 magnet: 'passive',
                             }
-                        }
+                        },
+                        label: {
+                            position: {
+                                name: 'bottom',
+                                args: {x: -15} // extra arguments for the label layout function, see `layout.PortLabel` section
+                            },
+                        },
                     }
                 }
             },
@@ -246,16 +258,16 @@ CUSTOMELEMENTS.init = function() {
             joint.dia.ElementView.prototype.initialize.apply(this,arguments);
             console.log('elementView Initialize got called');
             this.$template = $(_.template(this.model.get('template'))());
-            this.$template.find('input,select').on('mousedown click', function(evt) {
+            this.$template.find('input,select,textarea').on('mousedown click', function(evt) {
                 evt.stopPropagation();
             });
             // This is an example of reacting on the input change and storing the input data in the cell model.
-            this.$template.find('input').on('change', _.bind(function(evt) {
+            this.$template.find('input,select,textarea').on('change', _.bind(function(evt) {
                 this.model.set($(evt.target).attr('name')/*'input'*/, $(evt.target).val());
             }, this));
-            this.$template.find('select').on('change', _.bind(function(evt) {
-                this.model.set($(evt.target).attr('name'), $(evt.target).val());
-            }, this));
+            // this.$template.find('select').on('change', _.bind(function(evt) {
+            //     this.model.set($(evt.target).attr('name'), $(evt.target).val());
+            // }, this));
             let model = this.model;
             this.$template.find('input,select').each(function(){
                 let currentElementName = $(this).attr('name');

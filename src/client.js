@@ -27,7 +27,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     var graph = new joint.dia.Graph();
 
     var editorHeight = window.innerHeight*0.75;
-    var editorWidth = window.innerWidth;
+    var editorWidth = window.innerWidth*2;
 
     // editorMain
     var paper = new joint.dia.Paper({
@@ -122,7 +122,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     var editorElementToolBarGraph = new joint.dia.Graph,
         editorElementToolBarPaper = new joint.dia.Paper({
             el: $('#editorElementToolBar'),
-            height: window.innerHeight*0.25,
+            height: window.innerHeight*0.23,
             width: editorWidth,
             model: editorElementToolBarGraph,
             interactive: false
@@ -134,35 +134,44 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         group: 'out',
         args: {}, // extra arguments for the port layout function, see `layout.Port` section
         label: {
-            position: {
+            /*position: {
                 name: 'right',
-                args: { /*y: 6 */ x: 18} // extra arguments for the label layout function, see `layout.PortLabel` section
-            },
+                args: { /!*y: 6 *!/ x: 18} // extra arguments for the label layout function, see `layout.PortLabel` section
+            },*/
             markup: '<text class="label-text" fill="blue"/>'
         },
         attrs: {
-            text: { text: 'out1' },
+            text: { text: 'out' },
             position: {
                 name: 'right'
             },
             magnet: true,
         },
-        markup: '<rect width="16" height="16" y="-8" />',
+        markup: '<rect width="16" height="16" y="-8" fill="#fff" />',
         Z: 'auto'
     };
+    let portFilterInOut = JSON.parse(JSON.stringify(portOut1));
+    portFilterInOut.markup= '<rect width="16" height="16" y="-8" fill="green" />';
+    portFilterInOut.label.markup = '<text class="label-text" fill="green"/>'
+    portFilterInOut.attrs.text.text = 'true';
+    let portFilterOutOut = JSON.parse(JSON.stringify(portOut1));
+    portFilterOutOut.markup= '<rect width="16" height="16" y="-8" fill="red" />';
+    portFilterOutOut.label.markup = '<text class="label-text" fill="red"/>'
+    portFilterOutOut.attrs.text.text = 'false';
+
     var portIn1 = {
         // id: 'abc', // generated if `id` value is not present
         group: 'in',
         args: {}, // extra arguments for the port layout function, see `layout.Port` section
         label: {
-            position: {
+            /*position: {
                 name: 'left',
                 args: { x: -22 } // extra arguments for the label layout function, see `layout.PortLabel` section
-            },
+            },*/
             markup: '<text class="label-text" fill="blue"/>'
         },
         attrs: {
-            text: { text: 'in1' },
+            text: { text: 'in' },
             position: {
                 name: 'left'
             },
@@ -173,21 +182,8 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     };
 
 
-    var r3 = new joint.shapes.html.Element({
-        position: {
-            x: 240,
-            y: 10
-        },
-        size: {
-            width: 100,
-            height: 40
-        },
-        attrs: {
-            text: {
-                text: 'html'
-            }
-        }
-    });
+
+
     var epa_source = new joint.shapes.cep.Element({
         position: {
             x: 10,
@@ -219,12 +215,12 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
     var epa_sink = new joint.shapes.cep.Element({
         position: {
-            x: 120,
+            x: 180,
             y: 10,
         },
         size: {
             width: 100,
-            height: 100,
+            height: 95,
         },
         sinkName: 'change me',
         template: [
@@ -240,7 +236,31 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         ].join(''),
     });
     epa_sink.addPort(portIn1)
-    editorElementToolBarGraph.addCells([r3,epa_source, epa_sink]);
+
+    var epa_filter = new joint.shapes.cep.Element({
+        position: {
+            x: 320,
+            y: 10,
+        },
+        size: {
+            width: 100,
+            height: 95,
+        },
+        sinkName: 'change me',
+        template: [
+            '<div class="epa-element" >',
+            '<h4 style="background: coral"> Filter </h4>',
+            '<form>',
+            '<label for="filterFunction">FilterFunction:</label>',
+            '<textarea name="filterFunction" rows="3" placeholder="event.count>50"></textarea>',
+            '</form>',
+            '</div>'
+        ].join(''),
+    });
+
+    epa_filter.addPorts([portIn1,portFilterInOut,portFilterOutOut])
+
+    editorElementToolBarGraph.addCells([epa_source, epa_sink, epa_filter]);
 
     editorElementToolBarPaper.on('cell:pointerdown', function(cellView, evt, x, y) {
         $('body').append('<div id="flyPaper" style="position:fixed;z-index:100;opacity:.7;pointer-event:none;"></div>');
