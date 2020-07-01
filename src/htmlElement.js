@@ -59,7 +59,7 @@ CUSTOMELEMENTS.init = function() {
         tagName: 'foreignObject',
         selector: 'foreignObject',
         attributes: {
-            'overflow': 'hidden'
+            'overflow': 'visible'
         },
         children: [{
             tagName: 'div',
@@ -68,17 +68,17 @@ CUSTOMELEMENTS.init = function() {
             style: {
                 width: '100%',
                 height: '100%',
-                position: 'static',
+                position: 'relative'/*'static'*/,
                 backgroundColor: 'transparent',
-                textAlign: 'center',
+                // textAlign: 'center',
                 margin: 0,
-                padding: '0px 5px',
+                // padding: '0px 5px',
                 boxSizing: 'border-box',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
+                // display: 'flex',
+                // alignItems: 'center',
+                // justifyContent: 'center'
             },
-            children: [{
+            /*children: [{
                 tagName: 'input',
                 selector: 'textInput',
             },{
@@ -92,7 +92,7 @@ CUSTOMELEMENTS.init = function() {
                     selector: 'option2',
                 }]
             }
-            ]
+            ]*/
         }]
     };
 
@@ -117,14 +117,14 @@ CUSTOMELEMENTS.init = function() {
                         fontSize: 14
                     }
                 },
-                textInput: {
+                /*textInput: {
                     type: 'text',
                     value: 'someText',
                     ref: 'htmlContainer',
                     style: {
                         width: '100%'
                     }
-                },
+                },*/
                 '.':{magnet:false},
                 button: {
                     cursor: 'pointer',
@@ -153,7 +153,7 @@ CUSTOMELEMENTS.init = function() {
             },
             ports: {
                 groups: {
-                    a:{
+                    out:{
                         position: {
                             name: 'right'
                         },
@@ -164,13 +164,38 @@ CUSTOMELEMENTS.init = function() {
                             '.joint-port-body': {
                                 fill: '#fff',
                                 stroke: '#000',
-                                r: 10,
                                 magnet: true,
+                            }
+                        }
+                    },
+                    in: {
+                        position: {
+                            name: 'left',
+                        },
+                        attrs: {
+                            '.port-label': {
+                                fill: '#000'
+                            },
+                            '.joint-port-body': {
+                                fill: '#fff',
+                                stroke: '#000',
+                                r: 10,
+                                cx: -10,
+                                magnet: 'passive',
                             }
                         }
                     }
                 }
-            }
+            },
+            template: [
+                '<div class="html-element" id="test">',
+                '<button class="delete">x</button>',
+                '<label></label>',
+                '<span></span>', '<br/>',
+                '<select><option>--</option><option>one</option><option>two</option></select>',
+                '<input type="text" value="I\'m HTML input" />',
+                '</div>'
+            ].join(''),
         },{
             markup: [{
                 tagName: 'rect',
@@ -188,20 +213,7 @@ CUSTOMELEMENTS.init = function() {
                 console.log(this);
                 let htmlContainerId = joint.util.uuid();
                 this.attr('htmlContainer/id', htmlContainerId);
-                let htmlContainerElement = $('#'+ htmlContainerId);
-                htmlContainerElement.append([
-                    '<div class="html-element" id="test">',
-                    '<button class="delete">x</button>',
-                    '<label></label>',
-                    '<span></span>', '<br/>',
-                    '<select><option>--</option><option>one</option><option>two</option></select>',
-                    '<input type="text" value="I\'m HTML input" />',
-                    '</div>'
-                ].join(''));
 
-                htmlContainerElement.find('input,select').on('mousedown click', function(evt) {
-                    evt.stopPropagation();
-                });
             },
         }, {
 
@@ -240,15 +252,7 @@ CUSTOMELEMENTS.init = function() {
             let model = this.model
             let htmlContainerId = model.attr('htmlContainer/id');
             let htmlContainerElement = $('#'+ htmlContainerId);
-            htmlContainerElement.append([
-                '<div class="html-element" id="test">',
-                '<button class="delete">x</button>',
-                '<label></label>',
-                '<span></span>', '<br/>',
-                '<select><option>--</option><option>one</option><option>two</option></select>',
-                '<input type="text" value="I\'m HTML input" />',
-                '</div>'
-            ].join(''));
+            htmlContainerElement.append(model.get('template'));
             htmlContainerElement.find('input,select').on('mousedown click', function(evt) {
                 evt.stopPropagation();
             });
