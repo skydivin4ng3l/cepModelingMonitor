@@ -199,7 +199,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         },
         template: [
             '<div class="epa-element" >',
-            '<h4> Source </h4>',
+            '<h4 style="background: gold"> Source </h4>',
             '<form>',
                 '<label for="sourceName">SourceName:</label>',
                 '<input type="text" id="sourceName" name="sourceName"><br>',
@@ -215,7 +215,30 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         ].join(''),
     });
     epa_source.addPort(portOut1)
-    editorElementToolBarGraph.addCells([r3,epa_source]);
+
+    var epa_sink = new joint.shapes.cep.Element({
+        position: {
+            x: 120,
+            y: 10,
+        },
+        size: {
+            width: 100,
+            height: 100,
+        },
+        template: [
+            '<div class="epa-element" >',
+            '<h4 style="background: darkorange"> Sink </h4>',
+            '<form>',
+            '<label for="sinkName">SinkName:</label>',
+            '<input type="text" id="sinkName" name="sinkName"><br>',
+            '<label for="destination">Destination:</label>',
+            '<input type="text" id="destination" name="destination"><br>',
+            '</form>',
+            '</div>'
+        ].join(''),
+    });
+    epa_sink.addPort(portIn1)
+    editorElementToolBarGraph.addCells([r3,epa_source, epa_sink]);
 
     editorElementToolBarPaper.on('cell:pointerdown', function(cellView, evt, x, y) {
         $('body').append('<div id="flyPaper" style="position:fixed;z-index:100;opacity:.7;pointer-event:none;"></div>');
