@@ -1,61 +1,189 @@
 // import { Element } from 'jointjs/src/dia/Element'
 
-export const CUSTOMELEMENTS = new Object()
-CUSTOMELEMENTS.init = function() {
+export const CepElements = new Object()
+CepElements.init = function() {
 
     joint.shapes.cep = {};
-    /*joint.shapes.cep.Link =joint.dia.Link.define('cep.Link',{
-        attrs: {
-            line: {
-                targetMarker: {
-                    'type': 'path',
-                    'stroke': 'black',
-                    'd': 'M 20 -10 0 0 20 10 Z'
-                }
-            }
-        },
-        defaultLabel: {
-            markup: [
-                {
-                    tagName: 'rect',
-                    selector: 'body'
-                }, {
-                    tagName: 'text',
-                    selector: 'label'
-                }
-            ],
+    joint.shapes.cep.Link = joint.dia.Link.define(
+        'cep.Link',
+        {
             attrs: {
-                label: {
+                line: {
+                    connection: true,
+                    stroke: '#333333',
+                    strokeWidth: 2,
+                    strokeLinejoin: 'round',
+                    targetMarker: {
+                        'type': 'path',
+                        'd': 'M 10 -5 0 0 10 5 z'
+                    }
+                },
+                wrapper: {
+                    connection: true,
+                    strokeWidth: 20,
+                    strokeLinejoin: 'round'
+                },
+                streamLabel: {
                     fill: 'black',
                     fontSize: 12,
                     textAnchor: 'middle',
-                    textVerticalAnchor: 'middle',
-                    yAlignment: 'middle',
+                    //textVerticalAnchor: 'middle',
+                    // yAlignment: 'middle',
+                    xAlignment: 'middle',
                     pointerEvents: 'none',
-                    text: 'buuuuh',
-
+                    text: 'enter the stream name here',
+                    atConnectionRatioIgnoreGradient: 0.5,
+                    y: 40,
                 },
-                body: {
-                    ref: 'label',
+                streamLabelBody: {
+                    ref: 'streamLabel',
                     fill: 'white',
-                    stroke: 'cornflowerblue',
+                    stroke: 'black',
                     strokeWidth: 2,
+                    strokeDasharray: '5 5',
                     refWidth: '120%',
                     refHeight: '120%',
-                    refX: '-10%',
-                    refY: '-10%',
+                    // height: 40,
+                    // width: 200,
+                    // yAlignment: 'middle',
+                    xAlignment: 'middle',
+                    y: 28,
                     event: 'monitor:change:source',
-                    cursor: 'text'
+                    cursor: 'text',
+                    atConnectionRatioIgnoreGradient: 0.5,
+                },
+                streamLabelConnector: {
+                    atConnectionRatioIgnoreGradient: 0.5,
+                    d: 'M 0 0 0 28',
+                    stroke: 'black',
+                    strokeDasharray: '5 5'
+                },
+                streamMonitorBody: {
+                    // ref: 'streamLabelBody',
+                    // refWidth: '100%',
+                    // refHeight: '200%',
+                    height: 60,
+                    width: 200,
+                    // stroke: '#333333',
+                    fill: '#ffffff',
+                    fillOpacity: 0.5,
+                    xAlignment: 'middle',
+                    strokeWidth: 2,
+                    y: -60,
+                    atConnectionRatioIgnoreGradient:0.5,
+                },removeLabel: {
+                    fill: '#fff',
+                    text: 'X',
+                    fontSize: 12,
+                    /*textAnchor: 'middle',*/
+                    xAlignment: 'middle',
+                    yAlignment: 'middle',
+                    atConnectionRatioIgnoreGradient:0.1,
+                    cursor: 'pointer',
+                    event: 'monitor:remove:source'
+                },
+                removeButton: {
+                    ref: 'removeLabel',
+                    refR: '90%%',
+                    refCx: '100%',
+                    refCy: '100%%',
+                    xAlignment: 'middle',
+                    yAlignment: 'middle',
+                    fill: '#ff0000',
+                    atConnectionRatioIgnoreGradient:0.1,
+                },
+                foreignObject: {
+                    ref: 'streamMonitorBody',
+                    refWidth: '100%',
+                    refHeight: '100%',
+                    xAlignment: 'middle',
+                    y: -60,
+                    atConnectionRatioIgnoreGradient:0.5,
+                },
+                canvasContainer: {
+                    /*id: ,*/
                 }
-            },
-            position: {
-                distance: 0.5,
-                offset: 20,
             }
-        }
-    })*/
+        },{
+            markup: [
+                {
+                    tagName: 'path',
+                    selector: 'line',
+                    attributes: {
+                        'fill': 'none',
+                        'pointer-events': 'none'
+                    },
+                    /*className: 'connection'*/
+                }, {
+                    tagName: 'path',
+                    selector: 'wrapper',
+                    attributes: {
+                        'fill': 'none',
+                        'cursor': 'pointer',
+                        'stroke': 'transparent',
+                        'stroke-linecap': 'round',
+                    },
+                    /*className: 'connection-wrap'*/
+                },{
+                    tagName: 'g',
+                    className: 'link-tools'
+                }, {
+                    tagName: 'rect',
+                    selector: 'streamLabelBody'
+                }, {
+                    tagName: 'text',
+                    selector: 'streamLabel',
+                },{
+                    tagName: 'circle',
+                    selector: 'removeButton'
+                },{
+                    tagName: 'text',
+                    selector: 'removeLabel',
+                },{
+                    tagName: 'path',
+                    selector: 'streamLabelConnector'
+                },{
+                    tagName:'rect',
+                    selector: 'streamMonitorBody'
+                },{
+                    tagName: 'foreignObject',
+                    selector: 'foreignObject',
+                    attributes: {
+                        'overflow': 'visible'
+                    },
+                    children: [
+                        {
+                            tagName: 'div',
+                            namespaceURI: 'http://www.w3.org/1999/xhtml',
+                            selector: 'canvasContainer',
+                            style: {
+                                width: '100%',
+                                height: '100%',
+                                position: 'static',
+                                backgroundColor: 'transparent',
+                                textAlign: 'center',
+                                margin: 0,
+                                padding: '0px 0px',
+                                boxSizing: 'border-box',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            },
+                            /*attributes: {
+                                id: 'myFOContainer'
+                            }*/
+                        },
+                    ]
+                },
 
-    var foLabelMarkup = {
+            ],
+
+        }
+    );
+
+    joint.shapes.cep.LinkView = joint.dia.LinkView;
+
+    const foLabelMarkup = {
         tagName: 'foreignObject',
         selector: 'foreignObject',
         attributes: {
@@ -159,7 +287,7 @@ CUSTOMELEMENTS.init = function() {
                         },
                         attrs: {
                             '.port-label': {
-                                fill: '#000'
+                                fill: '#000',
                             },
                             rect: {
                                 /*fill: 'red',*/
@@ -170,7 +298,7 @@ CUSTOMELEMENTS.init = function() {
                         label: {
                             position: {
                                 name: 'bottom',
-                                args: {x: 15} // extra arguments for the label layout function, see `layout.PortLabel` section
+                                args: {x: 15 } // extra arguments for the label layout function, see `layout.PortLabel` section
                             },
                         },
                     },

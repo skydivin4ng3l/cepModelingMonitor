@@ -164,7 +164,12 @@ EditorEvents.init = function (paper, info) {
     // var sourceAnchorTool = new joint.linkTools.SourceAnchor();
     // var targetAnchorTool = new joint.linkTools.TargetAnchor();
     // var boundaryTool = new joint.linkTools.Boundary();
-    var removeButton = new joint.linkTools.Remove();
+    var removeButton = new joint.linkTools.Remove({
+        action: function(evt, linkView, toolView) {
+            console.log('heyheyh')
+            linkView.model.remove({ ui: true, tool: toolView.cid });
+        }
+    });
 
     var toolsView = new joint.dia.ToolsView({
         tools: [
@@ -213,35 +218,7 @@ EditorEvents.init = function (paper, info) {
         console.log('i got called');
         var link = linkView.model;
         var label = link.attr('streamLabel/text');
-        /*link.appendLabel({
-            markup: [
-                {
-                    tagName: 'circle',
-                    selector: 'body'
-                }
-            ],
-            attrs: {
-                body: {
-                    fill: '#ffffff',
-                    stroke: '#000000',
-                    strokeWidth: 1,
-                    r: 5
-                }
-            },
-            position: {
-                distance: 0
-            }
-        })
-        //get the index dynamically
-        link.transition('labels/1/position/distance',1, {
-            delay: 100,
-            duration: 500,
-            valueFunction: joint.util.interpolate.number,
-            timingFunction: joint.util.timing.linear
-        });
-        link.on('transition:end', function(link){
-            link.removeLabel(1)
-        })*/
+
         //To the page
         $('#container').append(
             '<div class="streamInput" id="streamInput" style="position:absolute;z-index:100;width:500px;top:50%;left:50%;margin:0 auto 0 -250px;">' +
@@ -257,128 +234,17 @@ EditorEvents.init = function (paper, info) {
             link.attr('streamLabel/text', newLabel);
             MonitorSubscriptionManager.registerConsumer(link);
 
-            /*var id = link.attr('canvasContainer/id');
-            console.log(id);
-            if( id == null) {
-                id = joint.util.uuid();
-            }
-
-            console.log(id);
-            link.attr('canvasContainer/id', id);
-
-            var canvasContainer = $('#'+id+'').append('<canvas width="200" height="40" style="position: absolute;z-index:100;width:200px;height:40px;"></canvas> ');
-            // var canvasId = canvasContainer.children('canvas').attr('id')
-            var ctx = canvasContainer.children('canvas')[0].getContext('2d');
-
-            // var ctx = $('#'+canvasId+'')[0].getContext('2d');
-            /!* Chart Configuration *!/
-            var chartConfig = {
-                type : 'line',
-                data : {
-                    labels : [5,10,15,20,25,30,35,40,45,50,55,60],
-                    datasets : [ {
-                        // label : 'EventCountPer5Sec',
-                        backgroundColor : 'rgb(255, 99, 132)',
-                        borderColor : 'rgb(255, 99, 132)',
-                        data : [5,0,17,5,0],
-                        fill : false
-                    } ]
-                },
-                options : {
-                    legend: {
-                        display: false
-                    },
-                    responsive : true,
-                    title : {
-                        display : false,
-                        text : 'EventCountPer5Sec'
-                    },
-                    tooltips : {
-                        mode : 'index',
-                        // intersect : false,
-                        axis: 'y'
-                    },
-                    // hover : {
-                    //     mode : 'nearest',
-                    //     intersect : true
-                    // },
-                    scales : {
-                        xAxes : [ {
-                            display : true,
-                            // type : 'category',
-                            // time : {
-                            //     displayFormats : {
-                            //         second : 'ss'
-                            //     },
-                            // },
-                            // distribution: 'series',
-                            scaleLabel : {
-                                display : false,
-                                labelString : 'seconds',
-                                padding: 0,
-                            },
-                            ticks: {
-                                beginAtZero: false,
-                                max: 60,
-                                min: 0,
-                                stepSize: 10,
-                                autoSkip: true,
-                                maxTicks: 6
-                            }
-                        } ],
-                        yAxes : [ {
-                            display : true,
-                            scaleLabel : {
-                                display : false,
-                                padding: 0,
-                                // labelString : 'Value'
-                            },
-
-                        } ]
-                    }
-                }
-            };
-
-            var myChart = new Chart(ctx, chartConfig /!*{
-                type: 'bar',
-                data: {
-                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                    datasets: [{
-                        label: '# of Votes',
-                        data: [12, 19, 3, 5, 2, 3],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        }]
-                    }
-                }
-            }*!/);*/
             $('#streamInputOk').off('click.streamNameOk');
             $('#streamInput').remove();
         })
     });
+
+    paper.on('monitor:remove:source', function (linkView, evt) {
+        evt.stopPropagation();
+        console.log('link remove button pressed')
+        linkView.model.remove();
+        //TODO remove listener etc
+    })
 
     paper.on('element:button:pointerdown', function(elementView, evt) {
         evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)

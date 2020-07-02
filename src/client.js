@@ -1,10 +1,10 @@
-import {CustomLink,AnimatedLink,CEPLink} from "./customlink.js";
+// import {CEPLink} from "./customlink.js";
 import {EditorEvents} from "./editorEvents.js";
-import {CUSTOMELEMENTS} from "./htmlElement.js";
+import {CepElements} from "./cepElement.js";
 
 const CEPMODEMON = new Object();
 CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
-    CUSTOMELEMENTS.init();
+    CepElements.init();
 
     var verticesTool = new joint.linkTools.Vertices();
     var segmentsTool = new joint.linkTools.Segments();
@@ -29,6 +29,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     var editorHeight = window.innerHeight*0.75;
     var editorWidth = window.innerWidth*2;
 
+
     // editorMain
     var paper = new joint.dia.Paper({
         el: editorMain,
@@ -42,20 +43,21 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         },
         snapLinks: true,
         // preventContextMenu: false,
-        //linkPinning: false,
-        defaultLink: new CEPLink() /*joint.shapes.cep.Link({
-            defaultLabel: {
-                attrs: {
-                    label: {
-                        text: 'Enter your Stream here'
-                    }
-                }
-            }
-
-        })*/
+        linkPinning: false,
+        defaultLink: new /*joint.dia.Link()*/joint.shapes.cep.Link(),
+        validateConnection: function(cellViewS, magnetS, cellViewT, magnetT) {
+            // Prevent linking from input ports.
+            if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
+            // Prevent linking from output ports to input ports within one element.
+            if (cellViewS === cellViewT) return false;
+            // Prevent linking to input ports.
+            return magnetT && magnetT.getAttribute('port-group') === 'in';
+        },
+        // Enable marking available cells & magnets
+        markAvailable: true
     });
 
-    /*var source = new joint.shapes.standard.Rectangle();
+    var source = new joint.shapes.standard.Rectangle();
     source.position(40, 40);
     source.resize(120, 60);
     source.attr({
@@ -115,7 +117,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     ]);
     link.addTo(graph);
     var linkView = link.findView(paper);
-    linkView.addTools(toolsView);*/
+    linkView.addTools(toolsView);
 
 
     // editorElementToolBar
@@ -152,12 +154,16 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     };
     let portFilterInOut = JSON.parse(JSON.stringify(portOut1));
     portFilterInOut.markup= '<rect width="16" height="16" y="-8" fill="green" />';
-    portFilterInOut.label.markup = '<text class="label-text" fill="green"/>'
+    portFilterInOut.label.markup = '<text class="label-text" fill="green" font-size="12"/>'
     portFilterInOut.attrs.text.text = 'true';
     let portFilterOutOut = JSON.parse(JSON.stringify(portOut1));
     portFilterOutOut.markup= '<rect width="16" height="16" y="-8" fill="red" />';
-    portFilterOutOut.label.markup = '<text class="label-text" fill="red"/>'
+    portFilterOutOut.label.markup = '<text class="label-text" fill="red" font-size="12"/>'
     portFilterOutOut.attrs.text.text = 'false';
+    let portFilterNotFilterableOut = JSON.parse(JSON.stringify(portOut1));
+    portFilterNotFilterableOut.markup= '<rect width="16" height="16" y="-8" fill="black" />';
+    portFilterNotFilterableOut.label.markup = '<text class="label-text" fill="black" font-size="12" />'
+    portFilterNotFilterableOut.attrs.text.text = 'non';
 
     var portIn1 = {
         // id: 'abc', // generated if `id` value is not present
@@ -220,17 +226,24 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         },
         size: {
             width: 100,
-            height: 95,
+            height: 130,
         },
         sinkName: 'change me',
+        consumerType: 'Software',
         template: [
             '<div class="epa-element" >',
             '<h4 style="background: darkorange"> Sink </h4>',
             '<form>',
             '<label for="sinkName">SinkName:</label>',
-            '<input type="text" id="sinkName" name="sinkName"><br>',
+            '<input type="text" name="sinkName"><br>',
             '<label for="destination">Destination:</label>',
-            '<input type="text" id="destination" name="destination"><br>',
+            '<input type="text" name="destination"><br>',
+            '<label for="consumerType">ConsumerType:</label>',
+            '<select name="consumerType">',
+            '<option>Hardware</option>',
+            '<option>Human Interaction</option>',
+            '<option>Software</option>',
+            '</select><br>',
             '</form>',
             '</div>'
         ].join(''),
@@ -244,23 +257,47 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         },
         size: {
             width: 100,
-            height: 95,
+            height: 120,
         },
-        sinkName: 'change me',
         template: [
             '<div class="epa-element" >',
             '<h4 style="background: coral"> Filter </h4>',
             '<form>',
             '<label for="filterFunction">FilterFunction:</label>',
-            '<textarea name="filterFunction" rows="3" placeholder="event.count>50"></textarea>',
+            '<textarea name="filterFunction" rows="5" placeholder="event.count>50"></textarea>',
             '</form>',
             '</div>'
         ].join(''),
     });
 
-    epa_filter.addPorts([portIn1,portFilterInOut,portFilterOutOut])
+    epa_filter.addPorts([portIn1,portFilterInOut,portFilterOutOut,portFilterNotFilterableOut])
 
-    editorElementToolBarGraph.addCells([epa_source, epa_sink, epa_filter]);
+    var epa_translate = new joint.shapes.cep.Element({
+        position: {
+            x: 460,
+            y: 10,
+        },
+        size: {
+            width: 120,
+            height: 220,
+        },
+        template: [
+            '<div class="epa-element" >',
+            '<h4 style="background: #3498DB"> Translate </h4>',
+            '<form>',
+            '<label for="outputEventType">OutputEventType:</label>',
+            '<input type="text" name="outputEventType"><br>',
+            '<label for="referenceName">ReferenceName:</label>',
+            '<input type="text" name="referenceName"><br>',
+            '<label for="derivationFunction">DerivationFunction:</label>',
+            '<textarea name="derivationFunction" rows="7" placeholder="Out.temperatureF := event.temperatureC * 9/5 + 32"></textarea>',
+            '</form>',
+            '</div>'
+        ].join(''),
+    });
+    epa_translate.addPorts([portIn1,portOut1]);
+
+    editorElementToolBarGraph.addCells([epa_source, epa_sink, epa_filter, epa_translate]);
 
     editorElementToolBarPaper.on('cell:pointerdown', function(cellView, evt, x, y) {
         $('body').append('<div id="flyPaper" style="position:fixed;z-index:100;opacity:.7;pointer-event:none;"></div>');
