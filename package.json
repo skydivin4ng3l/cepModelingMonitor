@@ -5,6 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon -e js,html -V server.js",
+    "debug": "nodemon --inspect -e js,html -V server.js",
     "build_proto": "protoc --js_out=import_style=commonjs,binary:./src/protos ./models/events/Aggregate.proto"
   },
   "keywords": [],
