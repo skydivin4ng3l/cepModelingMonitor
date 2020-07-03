@@ -73,9 +73,6 @@ ConsumerManager.ini = function (http) {
         socket.on("disconnect", () => {
             console.log("user disconnected");
         });
-        socket.on("chat message", (msg) => {
-            console.log("message: " + msg);
-        });
         socket.on("registerConsumer", (topicSuffix) => { registerSubscribedTopic(topicSuffix)}/*function(topicSuffix) {
             console.log("registerConsumer for: ", topicSuffix)
             this.registerSubscribedTopic(topicSuffix);
@@ -132,18 +129,21 @@ ConsumerManager.initConsumers = function() {
         ConsumerManager.initAggregateConsumer();
         ConsumerManager.initMonitorConsumer();
     })*/
+    console.log("Init Consumers")
     ConsumerManager.initAggregateConsumer();
     ConsumerManager.initMonitorConsumer();
 }
 
 ConsumerManager.updateOffsets = function( callback ) {
+    console.log("updatingOffsets:")
     let promise = new Promise(function(resolve, reject){
         let topics = [];
-        for( let topicSuffix of this.subscribedTopics.keys() ) {
+        for( let topicSuffix of ConsumerManager.subscribedTopics.keys() ) {
             topics.push(AGGREGATED_PREFIX + topicSuffix);
             topics.push(MONITOR_PREFIX + topicSuffix);
         }
-        this.consumer.offset.fetchLatestOffsets( topics, function (error, offsets) {
+        console.log(ConsumerManager.subscribedTopics)
+        ConsumerManager.consumer.offset.fetchLatestOffsets( topics, function (error, offsets) {
             if(error) {
                 console.warn(error)
             }
@@ -157,7 +157,9 @@ ConsumerManager.updateOffsets = function( callback ) {
     })
     promise.then(
         function(result){callback()},
-        function(error){}
+        function(error){
+            console.warn("UpdateOffset Failed")
+        }
         )
 }
 ConsumerManager.addConsumer = function(topicSuffix) {
@@ -180,16 +182,16 @@ ConsumerManager.addConsumer = function(topicSuffix) {
 
 ConsumerManager.initMonitorConsumer = function() {
     let fetchRequests = new Array()
-    for(let topic of this.subscribedTopics.keys()) {
+    for(let topic of ConsumerManager.subscribedTopics.keys()) {
         fetchRequests.push({
             topic: MONITOR_PREFIX + topic,
             partition: 0,
-            offset: this.offsetsSubscribedTopics.get(MONITOR_PREFIX + topic),
+            offset: ConsumerManager.offsetsSubscribedTopics.get(MONITOR_PREFIX + topic),
         })
     }
     try {
         // Consumer = kafka.Consumer;
-        this.consumer.monitor = new kafka.Consumer(this.clients.monitor, fetchRequests/*[{ topic: "MONITOR_AGGREGATED_liveTrainDataStream", partition: 0/!*, offset: 0*!/ }]*/, {
+        this.consumer.monitor = new kafka.Consumer(ConsumerManager.clients.monitor, fetchRequests/*[{ topic: "MONITOR_AGGREGATED_liveTrainDataStream", partition: 0/!*, offset: 0*!/ }]*/, {
             autocommit: true,
             autoCommitIntervalMs: 5000,
             encoding: 'buffer',
@@ -216,18 +218,20 @@ ConsumerManager.initMonitorConsumer = function() {
     });
 }
 ConsumerManager.initAggregateConsumer = function() {
+    console.log("Init Aggregation Consumers")
     let fetchRequests = new Array()
-    for(let topic of this.subscribedTopics.keys()) {
+    for(let topic of ConsumerManager.subscribedTopics.keys()) {
         fetchRequests.push({
             topic: AGGREGATED_PREFIX + topic,
             partition: 0,
-            offset: this.offsetsSubscribedTopics.get(AGGREGATED_PREFIX + topic),
+            offset: ConsumerManager.offsetsSubscribedTopics.get(AGGREGATED_PREFIX + topic),
         })
     }
+    console.log("fetchRequest: ", fetchRequests)
     try {
         // Consumer = kafka.Consumer;
         this.consumer.aggregate = new kafka.Consumer(
-            this.clients.aggregate,
+            ConsumerManager.clients.aggregate,
             fetchRequests,
             {
             autocommit: true,
@@ -262,40 +266,41 @@ ConsumerManager.initAggregateConsumer = function() {
 }
 ConsumerManager.registerSubscribedTopic = function(topicSuffix) {
     // let currentSubscriberCount = this.subscribedTopics.get(message)
-    console.log(this.subscribedTopics.size)
-    if(this.subscribedTopics.size === 0) {
+    console.log(ConsumerManager.subscribedTopics.size)
+    if(ConsumerManager.subscribedTopics.size === 0) {
+        console.log("Initialize SubscribedTopics MAP")
         // this.updateSubscribedTopics(topicSuffix, false)
-        this.subscribedTopics.set(topicSuffix,1)
-        this.updateOffsets(ConsumerManager.initConsumers)
+        ConsumerManager.subscribedTopics.set(topicSuffix,1)
+        ConsumerManager.updateOffsets(ConsumerManager.initConsumers)
         // this.initConsumers();
     } else {
-        this.updateSubscribedTopics(topicSuffix, false)
+        ConsumerManager.updateSubscribedTopics(topicSuffix, false)
     }
 }
 ConsumerManager.removeFromSubscribedTopic = function(topicSuffix) {
-    this.updateSubscribedTopics(topicSuffix, true)
-    if(this.subscribedTopics.get(topicSuffix) === 0) {
-        this.removeTopic(topicSuffix)
+    ConsumerManager.updateSubscribedTopics(topicSuffix, true)
+    if(ConsumerManager.subscribedTopics.get(topicSuffix) === 0) {
+        ConsumerManager.removeTopic(topicSuffix)
     }
 }
 ConsumerManager.updateSubscribedTopics = function(topicSuffix, remove) {
     console.log("updateConsumers: " + topicSuffix, "removed: " +remove);
-    let currentSubscriberCount = this.subscribedTopics.get(topicSuffix)
+    let currentSubscriberCount = ConsumerManager.subscribedTopics.get(topicSuffix)
     if(remove) {
         if(currentSubscriberCount === 1) {
-            this.subscribedTopics.delete(topicSuffix)
+            ConsumerManager.subscribedTopics.delete(topicSuffix)
             // this.removeTopic(topicSuffix);
         } else if(currentSubscriberCount > 1) {
-            this.subscribedTopics.set( topicSuffix, currentSubscriberCount - 1 );
+            ConsumerManager.subscribedTopics.set( topicSuffix, currentSubscriberCount - 1 );
         }
     } else {
         if(currentSubscriberCount == null) {
             currentSubscriberCount = 0;
-            this.subscribedTopics.set( topicSuffix, currentSubscriberCount + 1);
-            this.updateOffsets(function(){ return ConsumerManager.addConsumer(topicSuffix)})
+            ConsumerManager.subscribedTopics.set( topicSuffix, currentSubscriberCount + 1);
+            ConsumerManager.updateOffsets(function(){ return ConsumerManager.addConsumer(topicSuffix)})
             // this.addConsumer(topicSuffix)
         } else {
-            this.subscribedTopics.set( topicSuffix, currentSubscriberCount + 1);
+            ConsumerManager.subscribedTopics.set( topicSuffix, currentSubscriberCount + 1);
         }
     }
 }
