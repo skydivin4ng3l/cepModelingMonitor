@@ -228,30 +228,37 @@ MonitorSubscriptionManager.registerMonitorObject = function (monitorObject) {
     let oldStreamName;
     if(this.registry.linkRegister.has(linkKey)) {
         //Link is already registered
+        console.log('Link'+ linkKey +' is already registered');
         let oldMonitorObject = this.registry.linkRegister.get(linkKey);
         oldStreamName = oldMonitorObject.streamName;
         if (oldStreamName !== newStreamName) {
             if (this.registry.streamToLinksLookup.has(newStreamName)) {
                 // new Stream is already subscribed by someone
+                console.log("new Stream is already subscribed by someone")
                 let streamLinkSet = this.registry.streamToLinksLookup.get(newStreamName);
                 if(!streamLinkSet.has(linkKey)) {
                     // but not by this link
+                    console.log("but not by this link")
                     streamLinkSet.add(linkKey)
                     this.unregisterLinkFromStream(linkKey,oldStreamName)
                     /*let oldStreamLinkSet = this.registry.streamToLinksLookup.get(oldStreamName);
                     oldStreamLinkSet.delete(linkKey)
                     socket.emit('deleteConsumer', oldStreamName);*/
+                    console.log("Socket.io registerConsumer: ",newStreamName)
                     socket.emit('registerConsumer', newStreamName);
                 } else {
                     //No need to change
+                    console.log("No need To Change Consumer Registry")
                 }
             } else {
                 // new Stream is not already subscribed by anyone
+                console.log("new Stream is not already subscribed by anyone")
                 this.registerLinkKeyOnStreamLookup(linkKey, newStreamName)
                 this.unregisterLinkFromStream(linkKey,oldStreamName)
                 /*let oldStreamLinkSet = this.registry.streamToLinksLookup.get(oldStreamName);
                 oldStreamLinkSet.delete(linkKey)
                 socket.emit('deleteConsumer', oldStreamName);*/
+                console.log("Socket.io registerConsumer: ",newStreamName)
                 socket.emit('registerConsumer', newStreamName);
             }
         } else {
@@ -259,7 +266,9 @@ MonitorSubscriptionManager.registerMonitorObject = function (monitorObject) {
         }
     } else {
         //Link gets registered the first time
+        console.log("Link gets registered the first time")
         this.registerLinkKeyOnStreamLookup(linkKey, newStreamName)
+        console.log("Socket.io registerConsumer: ",newStreamName)
         socket.emit('registerConsumer', newStreamName);
         //this should be initiated only once per link
         monitorObject.link.on('transition:end', function(link){
