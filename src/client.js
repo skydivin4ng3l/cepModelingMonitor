@@ -2,31 +2,40 @@
 import {EditorEvents} from "./editorEvents.js";
 import {CepElements} from "./cepElement.js";
 
-const CEPMODEMON = new Object();
+export const CEPMODEMON = new Object();
+CEPMODEMON.initNavBar = function() {
+    let navBar = $('#navBar');
+    navBar.append([
+        '<button type="button" id="saveButton" class="saveButton" >Save</button>',
+        '<button type="button" id="loadButton" class="loadButton" >Load</button>',
+        '<button type="button" id="monitorStartButton"  class="monitorStartButton" > Start Monitoring</button>',
+        '<button type="button" id="monitorStopButton" class="monitorStopButton" > Stop Monitoring</button>',
+    ].join(''))
+    $('#saveButton').bind('click', CEPMODEMON.navSaveButton);
+    $('#loadButton').bind('click', CEPMODEMON.navLoadButton);
+    $('#monitorStartButton').bind('click', CEPMODEMON.navStartMonitoringButton);
+    $('#monitorStopButton').bind('click', CEPMODEMON.navStopMonitoringButton);
+}
+CEPMODEMON.navSaveButton = function(){
+    console.log("Save Button clicked");
+}
+CEPMODEMON.navLoadButton = function(){
+    console.log("Load Button clicked");
+}
+CEPMODEMON.navStartMonitoringButton = function(){
+    console.log("Monitoring Start Button clicked");
+}
+CEPMODEMON.navStopMonitoringButton = function(){
+    console.log("Monitoring Stop Button clicked");
+}
 CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
+    this.initNavBar();
+
     CepElements.init();
-
-    var verticesTool = new joint.linkTools.Vertices();
-    var segmentsTool = new joint.linkTools.Segments();
-    var sourceArrowheadTool = new joint.linkTools.SourceArrowhead();
-    var targetArrowheadTool = new joint.linkTools.TargetArrowhead();
-    var sourceAnchorTool = new joint.linkTools.SourceAnchor();
-    var targetAnchorTool = new joint.linkTools.TargetAnchor();
-    var boundaryTool = new joint.linkTools.Boundary();
-    var removeButton = new joint.linkTools.Remove();
-
-    var toolsView = new joint.dia.ToolsView({
-        tools: [
-            verticesTool, segmentsTool,
-            sourceArrowheadTool, targetArrowheadTool,
-            sourceAnchorTool, targetAnchorTool,
-            boundaryTool, removeButton
-        ]
-    });
 
     var graph = new joint.dia.Graph();
 
-    var editorHeight = window.innerHeight*0.75;
+    var editorHeight = window.innerHeight*0.75*2;
     var editorWidth = window.innerWidth*2;
 
 
@@ -56,68 +65,6 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         // Enable marking available cells & magnets
         markAvailable: true
     });
-
-    var source = new joint.shapes.standard.Rectangle();
-    source.position(40, 40);
-    source.resize(120, 60);
-    source.attr({
-        body: {
-            fill: 'white',
-            stroke: 'black',
-            strokeWidth: 2
-        },
-        label: {
-            text: 'Hello',
-            fill: 'black'
-        }
-    });
-    source.addTo(graph);
-
-    var target = new joint.shapes.standard.Ellipse();
-    target.position(440, 200);
-    target.resize(120, 60);
-    target.attr({
-        body: {
-            fill: 'white',
-            stroke: 'black',
-            strokeWidth: 2,
-            rx: 60,
-            ry: 30,
-        },
-        label: {
-            text: 'World!',
-            fill: 'black'
-        }
-    });
-    target.addTo(graph);
-
-    var link = new joint.shapes.standard.Link();
-    link.source(source, {
-        anchor: {
-            name: 'center',
-            args: {
-                dx: 30
-            }
-        }
-    });
-    link.target(target, {
-        anchor: {
-            name: 'center',
-            args: {
-                dx: -30
-            }
-        },
-        connectionPoint: {
-            name: 'boundary'
-        }
-    });
-    link.vertices([
-        { x: 130, y: 180 },
-        { x: 400, y: 180 }
-    ]);
-    link.addTo(graph);
-    var linkView = link.findView(paper);
-    linkView.addTools(toolsView);
 
 
     // editorElementToolBar
@@ -385,7 +332,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
 
 
-    var html = new joint.shapes.html.Element({
+    /*var html = new joint.shapes.html.Element({
         position: { x: 80, y: 80 },
         size: { width: 170, height: 100 },
         label: 'I am HTML',
@@ -413,7 +360,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         }
     });
     html.addPort(portOut1);
-    html.addTo(graph);
+    html.addTo(graph);*/
 
     var cep = new joint.shapes.cep.Element();
     cep.resize(100, 100);
@@ -622,7 +569,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
     AnimatedLink.addTo(graph);*/
 
-    var textBlock = new joint.shapes.standard.TextBlock();
+    /*var textBlock = new joint.shapes.standard.TextBlock();
     textBlock.resize(100, 100);
     textBlock.position(250, 610);
     textBlock.attr('root/title', 'joint.shapes.standard.TextBlock');
@@ -630,7 +577,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     textBlock.attr('label/text', 'Hyper Text Markup Language');
 // Styling of the label via `style` presentation attribute (i.e. CSS).
     textBlock.attr('label/style/color', 'red');
-    textBlock.addTo(graph);
+    textBlock.addTo(graph);*/
 
 }
 $(document).ready( function() {

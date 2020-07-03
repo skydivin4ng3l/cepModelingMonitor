@@ -41,6 +41,21 @@
       #messages li:nth-child(odd) {
         background: #eee;
       }*/
+      .flex-container {
+        display: flex;
+        flex-direction: row;
+        height: 50px;
+        z-index: 200;
+      }
+      .flex-container button {
+        padding-right: 25px;
+        padding-left: 25px;
+      }
+      .flex-paper-container {
+        display: flex;
+        flex-direction: column;
+      }
+
       .epa-element {
         position: absolute;
         pointer-events: none;
@@ -154,33 +169,23 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.js"></script>
 
-  <script>
-    $(function () {
-      var socket = io();
-      $("form").submit(function (e) {
-        e.preventDefault(); // prevents page reloading
-        socket.emit("chat message", $("#m").val());
-        $("#m").val("");
-        return false;
-      });
-      var test;
-      socket.on("chat message", function (msg) {
-        $("#messages").append($("<li>").text(msg));
-        test = msg;
-      });
-    });
-  </script>
+
   <script>
     var socket = io();
   </script>
   <body>
     <script type="module" src="client.js"></script>
-    <div id="container" style="position: relative; /*padding-bottom: 100px;*/">
-      <div class="paper" id="paper-main-window" style="position: relative;overflow: auto;"></div>
-      <div class="paper" id="paper-minimap-window" style="position: absolute; top: 10px; right: 10px"></div>
-      <div id="editorElementToolBar" style="position: absolute; /*top: 75%;*/ background: goldenrod; overflow: auto;" ></div>
+    <div  id="navBar" class="flex-container" style="position: fixed">
     </div>
-
+    <div id="paper-container" class="flex-paper-container">
+      <div id="container" style="position: relative; height:75vh; width: 100vw; overflow: auto;/*padding-bottom: 100px;*/">
+        <div class="paper" id="paper-main-window" style="position: relative;height: 75%"></div>
+        <div class="paper" id="paper-minimap-window" style="position: absolute; top: 10px; right: 10px"></div>
+      </div>
+      <div id="containerToolBar" style="height:25vh; width: 100vw; overflow-x: scroll;overflow-y: hidden;">
+        <div id="editorElementToolBar" style="position: relative; bottom: 0; left: 0; /*top: 75%;*/ background: #f6dea7; " ></div>
+      </div>
+    </div>
     <script>
 
      // initialize(document.getElementById("myholder"))
