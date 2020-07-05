@@ -16,11 +16,55 @@ CEPMODEMON.initNavBar = function() {
     $('#monitorStartButton').bind('click', CEPMODEMON.navStartMonitoringButton);
     $('#monitorStopButton').bind('click', CEPMODEMON.navStopMonitoringButton);
 }
+CEPMODEMON.saveToFile= function(content, fileName, contentType){
+    var a = document.createElement("a");
+    var file = new Blob([content], {type: contentType});
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(a.href)
+}
 CEPMODEMON.navSaveButton = function(){
     console.log("Save Button clicked");
+    let graphJsonObject = CEPMODEMON.graph.toJSON();
+    CEPMODEMON.saveToFile(JSON.stringify(graphJsonObject),'graph.json','application/json');
 }
 CEPMODEMON.navLoadButton = function(){
     console.log("Load Button clicked");
+    $('#container').append(
+        [
+            '<div class="fileInputContainer" id="fileInputContainer" style="position: absolute;z-index: 100;width: 500px;top:10%;left: 10%;">',
+            '<form class="fileInputForm">',
+            '<input type="file" id="fileInput" accept="application/json">',
+            '<input type="button" class="fileInputOk" id="fileInputOk" value="Ok">',
+            '</form>',
+            '</div>',
+        ].join('')
+    );
+    let loadedFile;
+    $('#fileInputOk').on('click', function () {
+        loadedFile = $('#fileInput')[0].files[0];
+        $('#fileInputOk').off('click');
+
+        if (loadedFile) {
+            var readFile = new FileReader();
+            readFile.onload = function(e) {
+                var contents = e.target.result;
+                var json = JSON.parse(contents);
+                alert_data(json);
+            };
+            readFile.readAsText(loadedFile);
+        } else {
+            console.log("Failed to load file");
+        }
+        function alert_data(json) {
+            console.warn(json)
+            CEPMODEMON.graph.fromJSON(json);
+        }
+        // let parsedJson = JSON.parse(JSON.stringify(loadedFile))
+
+        $('#fileInputContainer').remove();
+    })
 }
 CEPMODEMON.navStartMonitoringButton = function(){
     console.log("Monitoring Start Button clicked");
@@ -33,7 +77,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
     CepElements.init();
 
-    var graph = new joint.dia.Graph();
+    CEPMODEMON.graph = new joint.dia.Graph();
 
     var editorHeight = window.innerHeight*0.75*2;
     var editorWidth = window.innerWidth*2;
@@ -42,7 +86,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     // editorMain
     var paper = new joint.dia.Paper({
         el: editorMain,
-        model: graph,
+        model: this.graph,
         width: editorWidth,
         height: editorHeight,
         gridSize: 10,
@@ -286,7 +330,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             if (x > target.left && x < target.left + paper.$el.width() && y > target.top && y < target.top + paper.$el.height()) {
                 var s = flyShape.clone();
                 s.position(x - target.left - offset.x, y - target.top - offset.y);
-                graph.addCell(s);
+                CEPMODEMON.graph.addCell(s);
             }
             $('body').off('mousemove.fly').off('mouseup.fly');
             flyShape.remove();
@@ -297,7 +341,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     // editorMini conflicts with html element
     /*var paperSmall = new joint.dia.Paper({
         el: editorMini,
-        model: graph,
+        model: CEPMODEMON.graph,
         width: editorWidth*0.1,
         height: editorHeight*0.1,
         gridSize: 1,
@@ -327,7 +371,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             fontSize: 12
         }
     });
-    info.addTo(graph);
+    info.addTo(CEPMODEMON.graph);
     EditorEvents.init(paper, info);
 
 
@@ -360,7 +404,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         }
     });
     html.addPort(portOut1);
-    html.addTo(graph);*/
+    html.addTo(CEPMODEMON.graph);*/
 
     var cep = new joint.shapes.cep.Element();
     cep.resize(100, 100);
@@ -369,13 +413,13 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     cep.attr('option2/text', 'two');
     cep.addPort(portOut1);
     cep.addPort(portIn1);
-    cep.addTo(graph);
+    cep.addTo(CEPMODEMON.graph);
 
     /*var epa = new joint.shapes.devs.Model();
     epa.position(200,40);
     epa.addInPort('in1')
     epa.addOutPort('out1')
-    epa.addTo(graph);
+    epa.addTo(CEPMODEMON.graph);
     //other
     var rect = new joint.shapes.standard.Rectangle();
     rect.position(100, 30);
@@ -391,18 +435,18 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         },
     });
     rect.addPort(port);
-    rect.addTo(graph);
+    rect.addTo(CEPMODEMON.graph);
 
     var rect2 = rect.clone();
     rect2.translate(300, 0);
     rect2.attr("label/text", "Wolrd!");
-    rect2.addTo(graph);*/
+    rect2.addTo(CEPMODEMON.graph);*/
 
 
     // var normallink = new joint.shapes.standard.Link();
     // normallink.source(rect);
     // normallink.target(rect2);
-    // normallink.addTo(graph);
+    // normallink.addTo(CEPMODEMON.graph);
 
     // var linkView = normallink.findView(paper);
     //linkView.addTools(toolsView);
@@ -410,7 +454,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     /*var secondLink = new joint.shapes.standard.Link();
     secondLink.source(rect);
     secondLink.target(epa);
-    secondLink.addTo(graph);
+    secondLink.addTo(CEPMODEMON.graph);
     var link = new CustomLink();
     link.attr({
         offsetLabelAbsolute: {
@@ -427,7 +471,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     });
     link.source(rect);
     link.target(rect2);
-    link.addTo(graph);*/
+    link.addTo(CEPMODEMON.graph);*/
 
     socket.on("kafka", function (msg) {
         rect.attr("label/text", msg);
@@ -494,7 +538,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             y: 70 // 80 + -10
         }
     });
-    //link.addTo(graph);
+    //link.addTo(CEPMODEMON.graph);
 
     function contract(link) {
         link.transition('source', { x: 200, y: 110 }, {
@@ -567,7 +611,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         }
     });
 
-    AnimatedLink.addTo(graph);*/
+    AnimatedLink.addTo(CEPMODEMON.graph);*/
 
     /*var textBlock = new joint.shapes.standard.TextBlock();
     textBlock.resize(100, 100);
@@ -577,7 +621,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     textBlock.attr('label/text', 'Hyper Text Markup Language');
 // Styling of the label via `style` presentation attribute (i.e. CSS).
     textBlock.attr('label/style/color', 'red');
-    textBlock.addTo(graph);*/
+    textBlock.addTo(CEPMODEMON.graph);*/
 
 }
 $(document).ready( function() {
