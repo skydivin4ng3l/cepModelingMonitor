@@ -3,7 +3,7 @@ import {EditorEvents} from "./editorEvents.js";
 import {CepElements} from "./cepElement.js";
 
 export const CEPMODEMON = new Object();
-CEPMODEMON.initNavBar = function() {
+/*CEPMODEMON.initNavBar = function() {
     let navBar = $('#navBar');
     navBar.append([
         '<button type="button" id="saveButton" class="saveButton" >Save</button>',
@@ -51,29 +51,30 @@ CEPMODEMON.navLoadButton = function(){
             readFile.onload = function(e) {
                 var contents = e.target.result;
                 var json = JSON.parse(contents);
-                alert_data(json);
+                CEPMODEMON.loadGraph(json);
             };
             readFile.readAsText(loadedFile);
         } else {
-            console.log("Failed to load file");
+            console.warn("Failed to load file");
         }
-        function alert_data(json) {
-            console.warn(json)
-            CEPMODEMON.graph.fromJSON(json);
-        }
-        // let parsedJson = JSON.parse(JSON.stringify(loadedFile))
 
         $('#fileInputContainer').remove();
     })
+}
+CEPMODEMON.loadGraph = function(json) {
+    console.warn(json)
+    CEPMODEMON.graph.fromJSON(json);
+
 }
 CEPMODEMON.navStartMonitoringButton = function(){
     console.log("Monitoring Start Button clicked");
 }
 CEPMODEMON.navStopMonitoringButton = function(){
     console.log("Monitoring Stop Button clicked");
-}
+}*/
+
 CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
-    this.initNavBar();
+    // this.initNavBar();
 
     CepElements.init();
 
@@ -177,9 +178,6 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         markup: '<circle/>',
         Z: 'auto'
     };
-
-
-
 
     var epa_source = new joint.shapes.cep.Element({
         position: {
@@ -372,39 +370,8 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         }
     });
     info.addTo(CEPMODEMON.graph);
-    EditorEvents.init(paper, info);
 
-
-
-    /*var html = new joint.shapes.html.Element({
-        position: { x: 80, y: 80 },
-        size: { width: 170, height: 100 },
-        label: 'I am HTML',
-            select: 'one',
-        ports: {
-            groups: {a:{
-                position: {
-                    name: 'right'
-                },
-                attrs: {
-                    '.port-label': {
-                        fill: '#000'
-                    },
-                    '.joint-port-body': {
-                        fill: '#fff',
-                        stroke: '#000',
-                        r: 10,
-                        magnet: true,
-                    }
-                },
-                }}
-        },
-        attrs: {
-           '.':{ magnet: false }
-        }
-    });
-    html.addPort(portOut1);
-    html.addTo(CEPMODEMON.graph);*/
+    EditorEvents.init(paper, info, CEPMODEMON);
 
     var cep = new joint.shapes.cep.Element();
     cep.resize(100, 100);
@@ -414,214 +381,6 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     cep.addPort(portOut1);
     cep.addPort(portIn1);
     cep.addTo(CEPMODEMON.graph);
-
-    /*var epa = new joint.shapes.devs.Model();
-    epa.position(200,40);
-    epa.addInPort('in1')
-    epa.addOutPort('out1')
-    epa.addTo(CEPMODEMON.graph);
-    //other
-    var rect = new joint.shapes.standard.Rectangle();
-    rect.position(100, 30);
-    rect.resize(100, 40);
-    rect.attr({
-        body: {
-            fill: "blue",
-            strokeDasharray: '10,2'
-        },
-        label: {
-            text: "Hello",
-            fill: "white",
-        },
-    });
-    rect.addPort(port);
-    rect.addTo(CEPMODEMON.graph);
-
-    var rect2 = rect.clone();
-    rect2.translate(300, 0);
-    rect2.attr("label/text", "Wolrd!");
-    rect2.addTo(CEPMODEMON.graph);*/
-
-
-    // var normallink = new joint.shapes.standard.Link();
-    // normallink.source(rect);
-    // normallink.target(rect2);
-    // normallink.addTo(CEPMODEMON.graph);
-
-    // var linkView = normallink.findView(paper);
-    //linkView.addTools(toolsView);
-
-    /*var secondLink = new joint.shapes.standard.Link();
-    secondLink.source(rect);
-    secondLink.target(epa);
-    secondLink.addTo(CEPMODEMON.graph);
-    var link = new CustomLink();
-    link.attr({
-        offsetLabelAbsolute: {
-            atConnectionRatioIgnoreGradient: 0.66,
-            // x: -40,
-            // y: 80,
-            text: 'ignoreGradient: -40,80'
-        },
-        offsetLabelAbsoluteBody: {
-            atConnectionRatioIgnoreGradient: 0.66,
-            // x: -110, // -40 + -70
-            // y: 70 // 80 + -10
-        }
-    });
-    link.source(rect);
-    link.target(rect2);
-    link.addTo(CEPMODEMON.graph);*/
-
-    socket.on("kafka", function (msg) {
-        rect.attr("label/text", msg);
-    });
-
-    socket.on("chat message", function (msg) {
-        rect2.attr("label/text", msg);
-    });
-    /*var link = new CustomLink();
-    link.source(new g.Point(100, 110));
-    link.target(new g.Point(500, 110));
-    link.vertices([{ x: 300, y: 190 }]);
-    link.attr({
-        // relativeLabel: {
-        //     atConnectionRatio: 0.25,
-        //     text: '0.25'
-        // },
-        // relativeLabelBody: {
-        //     atConnectionRatio: 0.25
-        // },
-        // absoluteLabel: {
-        //     atConnectionLength: 150,
-        //     text: '150'
-        // },
-        // absoluteLabelBody: {
-        //     atConnectionLength: 150
-        // },
-        // absoluteReverseLabel: {
-        //     atConnectionLength: -100,
-        //     text: '-100'
-        // },
-        // absoluteReverseLabelBody: {
-        //     atConnectionLength: -100
-        // },
-        // offsetLabelPositive: {
-        //     atConnectionRatio: 0.66,
-        //     y: 40,
-        //     text: 'keepGradient: 0,40'
-        // },
-        // offsetLabelPositiveBody: {
-        //     atConnectionRatio: 0.66,
-        //     x: -60, // 0 + -60
-        //     y: 30 // 40 + -10
-        // },
-        // offsetLabelNegative: {
-        //     atConnectionRatio: 0.66,
-        //     y: -40,
-        //     text: 'keepGradient: 0,-40'
-        // },
-        // offsetLabelNegativeBody: {
-        //     atConnectionRatio: 0.66,
-        //     x: -60, // 0 + -60
-        //     y: -50 // -40 + -10
-        // },
-        offsetLabelAbsolute: {
-            atConnectionRatioIgnoreGradient: 0.66,
-            x: -40,
-            y: 80,
-            text: 'ignoreGradient: -40,80'
-        },
-        offsetLabelAbsoluteBody: {
-            atConnectionRatioIgnoreGradient: 0.66,
-            x: -110, // -40 + -70
-            y: 70 // 80 + -10
-        }
-    });
-    //link.addTo(CEPMODEMON.graph);
-
-    function contract(link) {
-        link.transition('source', { x: 200, y: 110 }, {
-            delay: 1000,
-            duration: 4000,
-            timingFunction: function(time) {
-                return (time <= 0.5) ? (2 * time) : (2 * (1 - time));
-            },
-            valueFunction: joint.util.interpolate.object
-        });
-
-        link.transition('target', { x: 400, y: 110 }, {
-            delay: 1000,
-            duration: 4000,
-            timingFunction: function(time) {
-                return (time <= 0.5) ? (2 * time) : (2 * (1 - time));
-            },
-            valueFunction: joint.util.interpolate.object
-        });
-
-        link.oscillateToggle = true;
-    }
-
-    function oscillate(link) {
-        link.transition('source', { x: 100, y: 190 }, {
-            delay: 1000,
-            duration: 4000,
-            timingFunction: function(time) {
-                return (time <= 0.5) ? (2 * time) : (2 * (1 - time));
-            },
-            valueFunction: joint.util.interpolate.object
-        });
-
-        link.transition('vertices/0', { x: 300, y: 110 }, {
-            delay: 1000,
-            duration: 4000,
-            timingFunction: function(time) {
-                return (time <= 0.5) ? (2 * time) : (2 * (1 - time));
-            },
-            valueFunction: joint.util.interpolate.object
-        });
-
-        link.transition('target', { x: 500, y: 190 }, {
-            delay: 1000,
-            duration: 4000,
-            timingFunction: function(time) {
-                return (time <= 0.5) ? (2 * time) : (2 * (1 - time));
-            },
-            valueFunction: joint.util.interpolate.object
-        });
-
-        link.oscillateToggle = false;
-    }
-
-    link.currentTransitions = 0;
-    link.oscillateToggle = 0;
-
-    contract(link);
-
-    link.on('transition:start', function(link) {
-        link.currentTransitions += 1;
-    });
-
-    link.on('transition:end', function(link) {
-        link.currentTransitions -= 1;
-
-        if (link.currentTransitions === 0) {
-            if (link.oscillateToggle) oscillate(link);
-            else contract(link);
-        }
-    });
-
-    AnimatedLink.addTo(CEPMODEMON.graph);*/
-
-    /*var textBlock = new joint.shapes.standard.TextBlock();
-    textBlock.resize(100, 100);
-    textBlock.position(250, 610);
-    textBlock.attr('root/title', 'joint.shapes.standard.TextBlock');
-    textBlock.attr('body/fill', 'lightgray');
-    textBlock.attr('label/text', 'Hyper Text Markup Language');
-// Styling of the label via `style` presentation attribute (i.e. CSS).
-    textBlock.attr('label/style/color', 'red');
-    textBlock.addTo(CEPMODEMON.graph);*/
 
 }
 $(document).ready( function() {
