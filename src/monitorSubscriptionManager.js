@@ -8,7 +8,7 @@ MonitorSubscriptionManager.registry = new Object({
     streamToLinksLookup: new Map(),
     linkRegister: new Map(),
 }) ;
-MonitorSubscriptionManager.startListeners = function() {
+MonitorSubscriptionManager.startMonitoring = function() {
     socket.on("kafkaMonitor", function (kafkaMessage) {
         console.log(kafkaMessage);
         MonitorSubscriptionManager.distributeEvents(kafkaMessage, false);
@@ -17,6 +17,16 @@ MonitorSubscriptionManager.startListeners = function() {
         console.log(kafkaMessage);
         MonitorSubscriptionManager.distributeEvents(kafkaMessage, true);
     });
+    socket.emit("startMonitoring");
+}
+MonitorSubscriptionManager.stopListeners = function() {
+    socket.removeAllListeners("kafkaMonitor");
+    socket.removeAllListeners("kafkaAggregated");
+    //TODO Stop Monitoring
+}
+MonitorSubscriptionManager.resetRegistry = function() {
+    this.registry.streamToLinksLookup = new Map();
+    this.registry.linkRegister = new Map();
 }
 MonitorSubscriptionManager.distributeEvents = function(kafkaMessage, aggregated) {
     let topic = kafkaMessage.topic;
@@ -39,19 +49,14 @@ MonitorSubscriptionManager.distributeEvents = function(kafkaMessage, aggregated)
             this.processMonitorEvent(linkKey)
         }
     }
-
 }
 MonitorSubscriptionManager.processAggregationEvent= function(linkKey,eventCount) {
     let monitorObject = this.registry.linkRegister.get(linkKey)
     monitorObject.chart.config.data.datasets.forEach((dataset) =>{
-        //TODO think about labels and order
         let length = dataset.data.length;
-        // let labelArray = [5,10,15,20,25,30,35,40,45,50,55,60]
         if (length >= 12) {
             dataset.data.shift()
-        } /*else {
-            monitorObject.chart.config.data.labels.unshift(labelArray[length])
-        }*/
+        }
         dataset.data.push(
             {
                 x: new Date(),
@@ -94,7 +99,7 @@ MonitorSubscriptionManager.processMonitorEvent= function(linkKey) {
 MonitorSubscriptionManager.initChart= function(canvasContainerId) {
     let canvasContainer = $('#'+canvasContainerId+'');
     let canvasArray = canvasContainer.children('canvas')
-    if(canvasArray.length === 0 /*!canvasContainer.has('canvas')*/) {
+    if(canvasArray.length === 0 ) {
         canvasContainer.append('<canvas width="200" height="60" style="position: absolute;z-index:100;width:200px;height:60px;"></canvas> ');
     } else {
         console.warn("Already has Canvas: "+ canvasContainerId)
@@ -105,7 +110,7 @@ MonitorSubscriptionManager.initChart= function(canvasContainerId) {
     let chartConfig = {
         type : 'line',
         data : {
-            labels : []/*[5,10,15,20,25,30,35,40,45,50,55,60]*/,
+            labels : [],
             datasets : [ {
                 // label : 'EventCountPer5Sec',
                 backgroundColor : 'rgb(255, 99, 132)',
@@ -184,32 +189,32 @@ MonitorSubscriptionManager.initChart= function(canvasContainerId) {
 MonitorSubscriptionManager.registerConsumer = function (link ) {
     let canvasContainerId = link.attr('canvasContainer/id');
     console.log(canvasContainerId);
-    let myChart;
-    let myMonitorObject = new Object();
+    let newChart;
+    let newMonitorObject = new Object();
     if( canvasContainerId == null) {
         canvasContainerId = joint.util.uuid();
         console.log(canvasContainerId);
         link.attr('canvasContainer/id', canvasContainerId);
-        myChart = this.initChart(canvasContainerId)
-    } /*else {
-        //TODO check for already Registered MonitorObject
+        newChart = this.initChart(canvasContainerId)
+    } else {
         if(this.registry.linkRegister.has(canvasContainerId)){
-            myMonitorObject = this.registry.linkRegister.get(canvasContainerId)
-
+            newMonitorObject = this.registry.linkRegister.get(canvasContainerId)
+            newMonitorObject.streamName = link.attr('streamLabel/text');
+            //TODO reassign Chart?
+            console.warn("Link already registered no chart will be initialized")
         } else {
             //no object registered
-            myChart = this.initChart(canvasContainerId)
+            newChart = this.initChart(canvasContainerId)
         }
-    }*/
+    }
 
-    //TODO check if Link Already has a canvas
 
-    myMonitorObject = {
+    newMonitorObject = {
         streamName: link.attr('streamLabel/text'),
-        chart: myChart,
+        chart: newChart,
         link: link,
     }
-    this.registerMonitorObject(myMonitorObject);
+    this.registerMonitorObject(newMonitorObject);
 
 }
 MonitorSubscriptionManager.updateMonitorObjectRegistry = function(link) {

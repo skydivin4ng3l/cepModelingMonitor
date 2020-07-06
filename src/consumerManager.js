@@ -23,47 +23,11 @@ ConsumerManager.ini = function (http) {
 
     this.consumer.admin = new kafka.Admin(this.clients.admin);
     this.consumer.offset = new kafka.Offset(this.clients.offset);
-    /*var topics = [{
-        topic: 'MONITOR_AGGREGATED_liveTrainDataStream',
-        partitions: 1,
-        replicationFactor: 1
-    }];
-    this.consumer.admin.createTopics(topics, (err, res) => {
-        // result is an array of any errors if a given topic could not be created
-        console.log('creatingTopics',res)
-    });*/
+
     this.consumer.admin.listTopics((err, res) => {
         console.log('topics', res);
     });
 
-    // try {
-    //     // Consumer = kafka.Consumer;
-    //     this.consumer.aggregate = new kafka.Consumer(this.clients.aggregate, [{ topic: "MONITOR_AGGREGATED_liveTrainDataStream", partition: 0/*, offset: 0*/ }], {
-    //         autocommit: true,
-    //         autoCommitIntervalMs: 5000,
-    //         encoding: 'buffer',
-    //         // keyEncoding: 'utf8',
-    //         fromOffset: 'latest'/*true*/,
-    //     });
-    // } catch (e) {
-    //     console.log(e)
-    // }
-    //
-    // this.consumer.aggregate.on("message", function (message) {
-    //     console.log("message",message);
-    //     var buf = Buffer.from(message.value, 'binary');
-    //     if(message.topic)
-    //
-    //     var decodedMessage = aggregateEvent.Aggregate.deserializeBinary(buf);
-    //     console.log("decodedMessage",decodedMessage)
-    //     console.log(message.topic,"value",decodedMessage.getVolume())
-    //     let kafkaMessage = new Object({
-    //         topic: message.topic,
-    //         value: decodedMessage
-    //     })
-    //     io.emit("kafka", decodedMessage.getVolume());
-    //
-    // });
     function registerSubscribedTopic(topicSuffix) {
         console.log("registerConsumer for: ", topicSuffix)
         ConsumerManager.registerSubscribedTopic(topicSuffix);
@@ -79,16 +43,26 @@ ConsumerManager.ini = function (http) {
         }*/)
         socket.on("deleteConsumer", function(topicSuffix){
             console.log("deleteConsumer for: ", topicSuffix)
-            this.removeFromSubscribedTopic(topicSuffix)
+            ConsumerManager.removeFromSubscribedTopic(topicSuffix)
+        })
+        socket.on("resetSubscribedTopics", function () {
+            console.log("resetting SubscribedTopics");
+            ConsumerManager.resetSubscribedTopics()
+        })
+        socket.on("startMonitoring", function () {
+            console.log("Start Monitoring");
+            ConsumerManager.initTopics(
+                ConsumerManager.subscribedTopics.keys(), function () {
+                    return ConsumerManager.updateOffsets(ConsumerManager.initConsumers)
+                }
+            )
         })
     });
-    /*io.on("connection", (socket) => {
-        socket.on("chat message", (msg) => {
-            io.emit("chat message", msg);
-        });
-    });*/
 }
-ConsumerManager.initTopic = function(topicSuffix){
+ConsumerManager.resetSubscribedTopics = function(){
+    ConsumerManager.subscribedTopics = new Map();
+}
+/*ConsumerManager.initTopic = function(topicSuffix){
     let topics = [{
         topic: 'MONITOR_' + topicSuffix,
         partitions: 1,
@@ -102,39 +76,68 @@ ConsumerManager.initTopic = function(topicSuffix){
         // result is an array of any errors if a given topic could not be created
         console.log('addedTopics: ',res)
     });
+}*/
+ConsumerManager.initTopics = function(topicSuffixArray, callbackFunction){
+    console.log("InitTopics: ",topicSuffixArray);
+    let promise = new Promise(function(resolve, reject){
+        let topics = [];
+        for( let topicSuffix of topicSuffixArray ) {
+            topics.push({
+                topic: AGGREGATED_PREFIX + topicSuffix,
+                partitions: 1,
+                replicationFactor: 1
+            });
+            topics.push({
+                topic: MONITOR_PREFIX+ topicSuffix,
+                partitions: 1,
+                replicationFactor: 1
+            });
+        }
+        console.log("topics to add: ", topics)
+        ConsumerManager.consumer.admin.createTopics( topics, function (error, result) {
+            if(error) {
+                console.warn("createTopics ERROR: ",error)
+            }
+            console.log("createTopics result: ", result)
+            resolve();
+        })
+    })
+    promise.then(
+        function(result){callbackFunction()},
+        function(error){
+            console.warn("TopicCreation Failed")
+        }
+    )
 }
 ConsumerManager.removeTopic = function(topicSuffix) {
-    this.consumer.admin.removeTopics(['MONITOR_' + topicSuffix,'MONITOR_AGGREGATED_' + topicSuffix], (err, removed) => {
+    //TODO remove KafkaConsumer
+    let topicToRemove = [MONITOR_PREFIX + topicSuffix]
+    this.consumer.monitor.removeTopics(topicToRemove, function (error, removed) {
+        if(error) {
+            console.warn(error);
+        } else {
+            console.log(removed);
+        }
+        ConsumerManager.consumer.aggregate.removeTopics([AGGREGATED_PREFIX + topicSuffix], function (error, removed) {
+            if(error) {
+                console.warn(error);
+            } else {
+                console.log(removed);
+            }
+        })
+    })
+    /*this.consumer.admin.removeTopics(['MONITOR_' + topicSuffix,'MONITOR_AGGREGATED_' + topicSuffix], (err, removed) => {
         // result is an array of any errors if a given topic could not be created
         console.log('removedTopics: ',removed)
-    })
+    })*/
 }
 ConsumerManager.initConsumers = function() {
-    //TODO extract method update topic offsets
-    /*let topics = [];
-    for( let topicSuffix of this.subscribedTopics.keys() ) {
-        topics.push(AGGREGATED_PREFIX + topicSuffix);
-        topics.push(MONITOR_PREFIX + topicSuffix);
-    }
-    this.consumer.offset.fetchLatestOffsets( topics, function (error, offsets) {
-        if(error) {
-            console.warn(error)
-        }
-        console.log(offsets)
-        let partition = 0;
-        for (let topic of topics) {
-            ConsumerManager.offsetsSubscribedTopics.set(topic,offsets[topic][partition])
-        }
-        //initialize with the first topic
-        ConsumerManager.initAggregateConsumer();
-        ConsumerManager.initMonitorConsumer();
-    })*/
     console.log("Init Consumers")
     ConsumerManager.initAggregateConsumer();
     ConsumerManager.initMonitorConsumer();
 }
 
-ConsumerManager.updateOffsets = function( callback ) {
+ConsumerManager.updateOffsets = function( callbackFunction ) {
     console.log("updatingOffsets:")
     let promise = new Promise(function(resolve, reject){
         let topics = [];
@@ -145,9 +148,9 @@ ConsumerManager.updateOffsets = function( callback ) {
         console.log(ConsumerManager.subscribedTopics)
         ConsumerManager.consumer.offset.fetchLatestOffsets( topics, function (error, offsets) {
             if(error) {
-                console.warn(error)
+                console.warn("fetchLatestOffsets ERROR: ",error)
             }
-            console.log(offsets)
+            console.log("fetchLatestOffsets: ", offsets)
             let partition = 0;
             for (let topic of topics) {
                 ConsumerManager.offsetsSubscribedTopics.set(topic,offsets[topic][partition])
@@ -156,28 +159,39 @@ ConsumerManager.updateOffsets = function( callback ) {
         })
     })
     promise.then(
-        function(result){callback()},
+        function(result){callbackFunction()},
         function(error){
             console.warn("UpdateOffset Failed")
         }
-        )
+    )
 }
 ConsumerManager.addConsumer = function(topicSuffix) {
-    //TODO update latest topics first
-    this.initTopic(topicSuffix);
+    //this.initTopic([topicSuffix]);
+    let monitorFetchRequest = {
+        topic: MONITOR_PREFIX + topicSuffix,
+        partition:0,
+        offset: ConsumerManager.offsetsSubscribedTopics.get(MONITOR_PREFIX + topicSuffix),
+    }
 
-    this.consumer.monitor.addTopics([{topic: MONITOR_PREFIX + topicSuffix }], function (err, added) {
+    this.consumer.monitor.addTopics([monitorFetchRequest], function (err, added) {
         if(err) {
             console.warn(err);
         }
         console.log(added);
-    });
-    this.consumer.aggregate.addTopics([{topic: AGGREGATED_PREFIX + topicSuffix }], function (err, added) {
+    }, true);
+
+    let aggregateFetchRequest = {
+        topic: AGGREGATED_PREFIX + topicSuffix,
+        partition:0,
+        offset: ConsumerManager.offsetsSubscribedTopics.get(AGGREGATED_PREFIX + topicSuffix),
+    }
+
+    this.consumer.aggregate.addTopics([aggregateFetchRequest], function (err, added) {
         if(err) {
             console.warn(err);
         }
         console.log(added)
-    });
+    }, true);
 }
 
 ConsumerManager.initMonitorConsumer = function() {
@@ -266,12 +280,17 @@ ConsumerManager.initAggregateConsumer = function() {
 }
 ConsumerManager.registerSubscribedTopic = function(topicSuffix) {
     // let currentSubscriberCount = this.subscribedTopics.get(message)
-    console.log(ConsumerManager.subscribedTopics.size)
+    console.log("SubscribedTopics Size: ",ConsumerManager.subscribedTopics.size)
     if(ConsumerManager.subscribedTopics.size === 0) {
         console.log("Initialize SubscribedTopics MAP")
         // this.updateSubscribedTopics(topicSuffix, false)
         ConsumerManager.subscribedTopics.set(topicSuffix,1)
-        ConsumerManager.updateOffsets(ConsumerManager.initConsumers)
+        //TODO add live2MonitoringMode or move to start Monitoring
+        ConsumerManager.initTopics(
+            ConsumerManager.subscribedTopics.keys(), function () {
+                return ConsumerManager.updateOffsets(ConsumerManager.initConsumers)
+            }
+        )
         // this.initConsumers();
     } else {
         ConsumerManager.updateSubscribedTopics(topicSuffix, false)
@@ -297,8 +316,15 @@ ConsumerManager.updateSubscribedTopics = function(topicSuffix, remove) {
         if(currentSubscriberCount == null) {
             currentSubscriberCount = 0;
             ConsumerManager.subscribedTopics.set( topicSuffix, currentSubscriberCount + 1);
-            ConsumerManager.updateOffsets(function(){ return ConsumerManager.addConsumer(topicSuffix)})
-            // this.addConsumer(topicSuffix)
+            // /TODO add live2MonitoringMode or move to start Monitoring
+            ConsumerManager.initTopics(
+                [topicSuffix],
+                function () {
+                    return ConsumerManager.updateOffsets(function(){
+                        return ConsumerManager.addConsumer(topicSuffix)
+                    })
+                }
+            )
         } else {
             ConsumerManager.subscribedTopics.set( topicSuffix, currentSubscriberCount + 1);
         }
