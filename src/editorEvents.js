@@ -2,6 +2,7 @@ import {MonitorSubscriptionManager} from './monitorSubscriptionManager.js';
 
 export const EditorEvents = new Object();
 EditorEvents.CEPMODEMON = new Object();
+EditorEvents.paper = new Object();
 EditorEvents.initNavBar = function() {
     let navBar = $('#navBar');
     navBar.append([
@@ -9,11 +10,15 @@ EditorEvents.initNavBar = function() {
         '<button type="button" id="loadButton" class="loadButton" >Load</button>',
         '<button type="button" id="monitorStartButton"  class="monitorStartButton" > Start Monitoring</button>',
         '<button type="button" id="monitorStopButton" class="monitorStopButton" > Stop Monitoring</button>',
+        '<button type="button" id="zoomInButton" class="zoomInButton" > Zoom In</button>',
+        '<button type="button" id="zoomOutButton" class="zoomOutButton" > Zoom Out</button>',
     ].join(''))
     $('#saveButton').bind('click', EditorEvents.navSaveButton);
     $('#loadButton').bind('click', EditorEvents.navLoadButton);
     $('#monitorStartButton').bind('click', EditorEvents.navStartMonitoringButton);
     $('#monitorStopButton').bind('click', EditorEvents.navStopMonitoringButton);
+    $('#zoomInButton').bind('click', EditorEvents.navZoomInButton);
+    $('#zoomOutButton').bind('click', EditorEvents.navZoomOutButton);
 }
 EditorEvents.saveToFile= function(content, fileName, contentType){
     var a = document.createElement("a");
@@ -79,9 +84,26 @@ EditorEvents.navStopMonitoringButton = function(){
     console.log("Monitoring Stop Button clicked");
     MonitorSubscriptionManager.stopListeners();
 }
+EditorEvents.navZoomInButton = function(){
+    //zoom in
+    let currentScale = EditorEvents.paper.scale().sx;
+    if (currentScale >= 2) { return }
+    let newScale = currentScale +0.1;
+    EditorEvents.paper.scale(newScale,newScale )
+}
+EditorEvents.navZoomOutButton = function(){
+    //zoom out
+    let currentScale = EditorEvents.paper.scale().sx;
+    if (currentScale <= 0.2) { return }
+    let newScale = currentScale -0.1;
+    EditorEvents.paper.scale(newScale,newScale )
+}
+
+
 EditorEvents.init = function (paper, info, CEPMODEMON) {
     EditorEvents.CEPMODEMON = CEPMODEMON;
     EditorEvents.initNavBar();
+    EditorEvents.paper = paper;
     //MonitorSubscriptionManager.startListeners();
 
 
@@ -153,8 +175,8 @@ EditorEvents.init = function (paper, info, CEPMODEMON) {
         }
     }
 
-    ///zooming
-    paper.on({
+    ///Mouse zooming
+    /*paper.on({
         'blank:mousewheel': function(evt,x,y,delta) {
             console.log(delta);
 
@@ -172,7 +194,7 @@ EditorEvents.init = function (paper, info, CEPMODEMON) {
                 this.scale(newScale,newScale )
             }
         }
-    })
+    })*/
 
     // //panning
     // paper.on({
