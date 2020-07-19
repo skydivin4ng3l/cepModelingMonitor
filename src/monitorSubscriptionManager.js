@@ -8,6 +8,10 @@ MonitorSubscriptionManager.registry = new Object({
     streamToLinksLookup: new Map(),
     linkRegister: new Map(),
 }) ;
+MonitorSubscriptionManager.eventCountThresholds = new Object({
+    mid: 5,
+    high: 20,
+});
 MonitorSubscriptionManager.startMonitoring = function() {
     socket.on("kafkaMonitor", function (kafkaMessage) {
         console.log(kafkaMessage);
@@ -42,7 +46,7 @@ MonitorSubscriptionManager.distributeEvents = function(kafkaMessage, aggregated)
         for(let linkKey of subScribedLinks) {
             this.processAggregationEvent(linkKey,kafkaMessage.value);
             //testing purposes only
-            this.processMonitorEvent(linkKey)
+            //this.processMonitorEvent(linkKey)
         }
     } else {
         for(let linkKey of subScribedLinks) {
@@ -55,13 +59,26 @@ MonitorSubscriptionManager.processAggregationEvent= function(linkKey,eventCount)
     monitorObject.chart.config.data.datasets.forEach((dataset) =>{
         let length = dataset.data.length;
         if (length >= 12) {
-            dataset.data.shift()
+            dataset.data.shift();
+            dataset.pointBackgroundColor.shift();
+            dataset.pointBorderColor.shift();
         }
         dataset.data.push(
             {
                 x: new Date(),
                 y: eventCount,
             })
+        let color = 'rgb( 0, 153, 51 )';
+        if (eventCount >= MonitorSubscriptionManager.eventCountThresholds.mid ) {
+            color = 'rgb( 255, 204, 0 )';
+            if(eventCount >= MonitorSubscriptionManager.eventCountThresholds.high) {
+                color = 'rgb(255, 99, 132)';
+            }
+        }
+        dataset.backgroundColor = color;
+        dataset.borderColor = color;
+        dataset.pointBackgroundColor.push(color);
+        dataset.pointBorderColor.push(color);
     })
     monitorObject.chart.update();
 }
@@ -116,6 +133,8 @@ MonitorSubscriptionManager.initChart= function(canvasContainerId) {
                 backgroundColor : 'rgb(255, 99, 132)',
                 borderColor : 'rgb(255, 99, 132)',
                 data : [],
+                pointBackgroundColor : [],
+                pointBorderColor : [],
                 fill : true
             } ]
         },
