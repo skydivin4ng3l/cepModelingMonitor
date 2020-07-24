@@ -300,20 +300,37 @@ EditorEvents.init = function (paper, info, CEPMODEMON) {
         //TODO remove listener etc
     })
 
+    paper.on('cepElement:remove', function (elementView, evt) {
+        evt.stopPropagation();
+        console.log('element remove button pressed')
+        elementView.model.remove();
+        //TODO remove listener etc
+    })
+
     //WIP Minification of EPAs
     paper.on('element:button:pointerdown', function(elementView, evt) {
         evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)
 
         var model = elementView.model;
 
+        //Open Delete Menu
+        if(model.attr('removeLabel/visibility') === 'visible') {
+            model.attr('removeLabel/visibility', 'hidden');
+            model.attr('removeButton/visibility', 'hidden');
+        } else {
+            model.attr('removeLabel/visibility', 'visible');
+            model.attr('removeButton/visibility', 'visible');
+        }
+
+        //Foldin the EPA
         if (model.attr('body/visibility') === 'visible') {
-            model.attr('body/visibility', 'hidden');
-            model.attr('label/visibility', 'hidden');
+            // model.attr('body/visibility', 'hidden');
+            // model.attr('label/visibility', 'hidden');
             model.attr('buttonLabel/text', '＋'); // fullwidth plus
 
         } else {
-            model.attr('body/visibility', 'visible');
-            model.attr('label/visibility', 'visible');
+            // model.attr('body/visibility', 'visible');
+            // model.attr('label/visibility', 'visible');
             model.attr('buttonLabel/text', '＿'); // fullwidth underscore
         }
     });

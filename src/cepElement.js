@@ -84,9 +84,9 @@ CepElements.init = function() {
                 },
                 removeButton: {
                     ref: 'removeLabel',
-                    refR: '90%%',
+                    refR: '90%',
                     refCx: '100%',
-                    refCy: '100%%',
+                    refCy: '100%',
                     xAlignment: 'middle',
                     yAlignment: 'middle',
                     fill: '#ff0000',
@@ -233,7 +233,8 @@ CepElements.init = function() {
                     refHeight: '100%',
                     stroke: '#333333',
                     fill: '#ffffff',
-                    strokeWidth: 2
+                    strokeWidth: 2,
+                    visibility: 'visible',
                 },
                 foreignObject: {
                     refWidth: '100%',
@@ -245,14 +246,6 @@ CepElements.init = function() {
                         fontSize: 14
                     }
                 },
-                /*textInput: {
-                    type: 'text',
-                    value: 'someText',
-                    ref: 'htmlContainer',
-                    style: {
-                        width: '100%'
-                    }
-                },*/
                 '.':{magnet:false},
                 button: {
                     cursor: 'pointer',
@@ -277,7 +270,35 @@ CepElements.init = function() {
                     fill: 'black',
                     fontSize: 8,
                     fontWeight: 'bold'
-                }
+                },removeLabel: {
+                    pointerEvents: 'none',
+                    ref: 'body',
+                    refX: '50%',
+                    refY: '-50%',
+                    refX2: 5,
+                    refY2: -5,
+                    fill: '#fff',
+                    text: 'X',
+                    fontSize: 12,
+                    visibility: 'hidden',
+                    /*textAnchor: 'middle',*/
+                    // xAlignment: 'middle',
+                    // yAlignment: 'middle',
+                },
+                removeButton: {
+                    cursor: 'pointer',
+                    event: 'cepElement:remove',
+                    ref: 'removeLabel',
+                    refR: '90%',
+                    refX: '50%',
+                    // refCx: '100%',
+                    // refCy: '100%',
+                    refY: '50%',
+                    xAlignment: 'middle',
+                    yAlignment: 'middle',
+                    fill: '#ff0000',
+                    visibility: 'hidden',
+                },
             },
             ports: {
                 groups: {
@@ -346,6 +367,12 @@ CepElements.init = function() {
             }, {
                 tagName: 'text',
                 selector: 'buttonLabel'
+            }, {
+                tagName: 'circle',
+                selector: 'removeButton'
+            }, {
+                tagName: 'text',
+                selector: 'removeLabel',
             }, foLabelMarkup ],
 
             initialize: function() {
