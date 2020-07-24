@@ -74,6 +74,8 @@ EditorEvents.loadGraph = function(json) {
         if (!link.attr('streamLabel/text').includes(' ')){
             MonitorSubscriptionManager.registerConsumer(link);
         }
+        // Remove potenially saved Eventmarkers (labels)
+        link.set('labels',[]);
     }
 }
 EditorEvents.navStartMonitoringButton = function(){
