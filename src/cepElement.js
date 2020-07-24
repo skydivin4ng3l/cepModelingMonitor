@@ -206,21 +206,6 @@ CepElements.init = function() {
                 // alignItems: 'center',
                 // justifyContent: 'center'
             },
-            /*children: [{
-                tagName: 'input',
-                selector: 'textInput',
-            },{
-                tagName: 'select',
-                selector: 'dropdown',
-                children:[{
-                    tagName: 'option',
-                    selector: 'option1',
-                },{
-                    tagName: 'option',
-                    selector: 'option2',
-                }]
-            }
-            ]*/
         }]
     };
 
@@ -350,10 +335,16 @@ CepElements.init = function() {
             },
             template: [
                 '<div class="epa-element" >',
-                '<h4 style="background: darkorange"> EPA </h4>',
+                '<h4 style="background: darkorange"> Generic EPA </h4>',
                 '<form>',
                 '<label for="epaName">EPAName:</label>',
                 '<input type="text" id="epaName" name="epaName"><br>',
+                '<label for="genericEpaFunction">GenericEPAFunction:</label>',
+                '<textarea name="genericEpaFunction" rows="5" placeholder="someNotes"></textarea>',
+                '<label for="referenceName">ReferenceName:</label>',
+                '<input type="text" name="referenceName" placeholder="PlannedTrainData"><br>',
+                '<label for="refQueryFunction">RefQueryFunction:</label>',
+                '<textarea name="refQueryFunction" rows="5" placeholder="Query"></textarea>',
                 '</form>',
                 '</div>'
             ].join(''),

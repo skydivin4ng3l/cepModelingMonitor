@@ -178,6 +178,14 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         markup: '<circle/>',
         Z: 'auto'
     };
+    let portInA = JSON.parse(JSON.stringify(portIn1));
+    //portInA.markup= '<rect width="16" height="16" y="-8" fill="green" />';
+    portInA.label.markup = '<text class="label-text" fill="#e68a00" font-size="12"/>'
+    portInA.attrs.text.text = 'A';
+    let portInB = JSON.parse(JSON.stringify(portIn1));
+    //portInB.markup= '<rect width="16" height="16" y="-8" fill="green" />';
+    portInB.label.markup = '<text class="label-text" fill="#0073e6" font-size="12"/>'
+    portInB.attrs.text.text = 'B';
 
     var epa_source = new joint.shapes.cep.Element({
         position: {
@@ -210,7 +218,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
     var epa_sink = new joint.shapes.cep.Element({
         position: {
-            x: 180,
+            x: 160,
             y: 10,
         },
         size: {
@@ -241,17 +249,19 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
     var epa_filter = new joint.shapes.cep.Element({
         position: {
-            x: 320,
+            x: 290,
             y: 10,
         },
         size: {
             width: 100,
-            height: 120,
+            height: 155,
         },
         template: [
             '<div class="epa-element" >',
             '<h4 style="background: coral"> Filter </h4>',
             '<form>',
+            '<label for="filterName">FilterName:</label>',
+            '<input type="text" name="filterName"><br>',
             '<label for="filterFunction">FilterFunction:</label>',
             '<textarea name="filterFunction" rows="5" placeholder="event.count>50"></textarea>',
             '</form>',
@@ -263,7 +273,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
     var epa_translate = new joint.shapes.cep.Element({
         position: {
-            x: 460,
+            x: 440,
             y: 10,
         },
         size: {
@@ -274,10 +284,12 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             '<div class="epa-element" >',
             '<h4 style="background: #3498DB"> Translate </h4>',
             '<form>',
+            '<label for="translateName">TranslateName:</label>',
+            '<input type="text" name="translateName"><br>',
             '<label for="outputEventType">OutputEventType:</label>',
             '<input type="text" name="outputEventType"><br>',
-            '<label for="referenceName">ReferenceName:</label>',
-            '<input type="text" name="referenceName"><br>',
+            //'<label for="referenceName">ReferenceName:</label>',
+            //'<input type="text" name="referenceName"><br>',
             '<label for="derivationFunction">DerivationFunction:</label>',
             '<textarea name="derivationFunction" rows="7" placeholder="Out.temperatureF := event.temperatureC * 9/5 + 32"></textarea>',
             '</form>',
@@ -286,7 +298,78 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     });
     epa_translate.addPorts([portIn1,portOut1]);
 
-    editorElementToolBarGraph.addCells([epa_source, epa_sink, epa_filter, epa_translate]);
+    var epa_enrich = new joint.shapes.cep.Element({
+        position: {
+            x: 600,
+            y: 10,
+        },
+        size: {
+            width: 120,
+            height: 355,
+        },
+        template: [
+            '<div class="epa-element" >',
+            '<h4 style="background: #73b3de"> Enrich </h4>',
+            '<form>',
+            '<label for="enrichName">EnrichName:</label>',
+            '<input type="text" name="enrichName"><br>',
+            '<label for="outputEventType">OutputEventType:</label>',
+            '<input type="text" name="outputEventType"><br>',
+            '<label for="derivationFunction">DerivationFunction:</label>',
+            '<textarea name="derivationFunction" rows="7" placeholder="Out.temperatureF := Ref.temperatureC * 9/5 + 32"></textarea>',
+            '<label for="referenceName">ReferenceName:</label>',
+            '<input type="text" name="referenceName" placeholder="TrainData"><br>',
+            '<label for="refQueryFunction">RefQueryFunction:</label>',
+            '<textarea name="refQueryFunction" rows="5" placeholder="TrainData.find(and(eq(trainSectionId,event.TrainSection),eq(endStationId,event.EndStationId),eq(plannedArrivalTimeEndStation,event.PlannedArrivalTimeEndStation))).sort(ascending(plannedEventTime))"></textarea>',
+            '</form>',
+            '</div>'
+        ].join(''),
+    });
+    epa_enrich.addPorts([portIn1,portOut1]);
+
+    var epa_pattern = new joint.shapes.cep.Element({
+        position: {
+            x: 775,
+            y: 10,
+        },
+        size: {
+            width: 120,
+            height: 260,
+        },
+        template: [
+            '<div class="epa-element" >',
+            '<h4 style="background: #bb4ca2"> Pattern </h4>',
+            '<form>',
+            '<label for="patternName">PatternName:</label>',
+            '<input type="text" name="patternName"><br>',
+            '<label for="inputAEventType">InputAEventType:</label>',
+            '<input type="text" name="inputAEventType"><br>',
+            '<label for="inputBEventType">InputBEventType:</label>',
+            '<input type="text" name="inputBEventType"><br>',
+            '<label for="outputEventType">OutputEventType:</label>',
+            '<input type="text" name="outputEventType"><br>',
+            '<label for="patternFunction">PatternFunction:</label>',
+            '<textarea name="patternFunction" rows="5" placeholder="(A.count>50).followedBy(B.price<20)"></textarea>',
+            '</form>',
+            '</div>'
+        ].join(''),
+    });
+
+    epa_pattern.addPorts([portInA,portInB,portOut1])
+
+    let epa_generic = new joint.shapes.cep.Element({
+            position: {
+                x: 950,
+                y: 10,
+            },
+            size: {
+                width: 120,
+                height: 290,
+            },
+    });
+    epa_generic.addPorts([portIn1,portOut1]);
+
+    editorElementToolBarGraph.addCells([epa_source, epa_sink, epa_filter, epa_translate,epa_pattern, epa_enrich,epa_generic ]);
 
     editorElementToolBarPaper.on('cell:pointerdown', function(cellView, evt, x, y) {
         $('body').append('<div id="flyPaper" style="position:fixed;z-index:100;opacity:.7;pointer-event:none;"></div>');
@@ -373,14 +456,14 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
     EditorEvents.init(paper, info, CEPMODEMON);
 
-    var cep = new joint.shapes.cep.Element();
+    /*var cep = new joint.shapes.cep.Element();
     cep.resize(100, 100);
     cep.position(500, 610);
     cep.attr('option1/text', 'one');
     cep.attr('option2/text', 'two');
     cep.addPort(portOut1);
     cep.addPort(portIn1);
-    cep.addTo(CEPMODEMON.graph);
+    cep.addTo(CEPMODEMON.graph);*/
 
 }
 $(document).ready( function() {
