@@ -116,7 +116,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     var editorElementToolBarGraph = new joint.dia.Graph,
         editorElementToolBarPaper = new joint.dia.Paper({
             el: $('#editorElementToolBar'),
-            height: window.innerHeight*0.23,
+            height: 300 /*window.innerHeight*0.23*/,
             width: editorWidth,
             model: editorElementToolBarGraph,
             interactive: false
