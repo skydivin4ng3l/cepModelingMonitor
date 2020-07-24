@@ -61,7 +61,7 @@
       .epa-element {
         position: absolute;
         pointer-events: none;
-        z-index: 2;
+        z-index: 99;
         width: 100%;
         height: 100%;
       }
@@ -88,6 +88,10 @@
       .epa-element input {
         width: 100%;
         pointer-events: auto;
+      }
+
+      .epa-element textarea {
+        overflow: hidden;
       }
 
       /*.html-element {
