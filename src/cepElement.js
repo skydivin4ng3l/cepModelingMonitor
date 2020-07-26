@@ -452,7 +452,7 @@ CepElements.init = function() {
             //     this.model.set($(evt.target).attr('name'), $(evt.target).val());
             // }, this));
             let model = this.model;
-            this.$template.find('input,select').each(function(){
+            this.$template.find('input,select,textarea').each(function(){
                 let currentElementName = $(this).attr('name');
                 let modelValueForName = model.get(currentElementName)
                 if (typeof modelValueForName !== 'undefined' ) {
