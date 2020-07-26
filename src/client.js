@@ -116,7 +116,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     var editorElementToolBarGraph = new joint.dia.Graph,
         editorElementToolBarPaper = new joint.dia.Paper({
             el: $('#editorElementToolBar'),
-            height: 300 /*window.innerHeight*0.23*/,
+            height: 600 /*window.innerHeight*0.23*/,
             width: editorWidth,
             model: editorElementToolBarGraph,
             interactive: false
@@ -156,6 +156,14 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     portFilterNotFilterableOut.markup= '<rect width="16" height="16" y="-8" fill="black" />';
     portFilterNotFilterableOut.label.markup = '<text class="label-text" fill="black" font-size="12" />'
     portFilterNotFilterableOut.attrs.text.text = 'non';
+    let portOutA = JSON.parse(JSON.stringify(portOut1));
+    portOutA.markup= '<rect width="16" height="16" y="-8" fill="#e68a00" />';
+    portOutA.label.markup = '<text class="label-text" fill="#e68a00" font-size="12"/>'
+    portOutA.attrs.text.text = 'A';
+    let portOutB = JSON.parse(JSON.stringify(portOut1));
+    portOutB.markup= '<rect width="16" height="16" y="-8" fill="#0073e6" />';
+    portOutB.label.markup = '<text class="label-text" fill="#0073e6" font-size="12"/>'
+    portOutB.attrs.text.text = 'B';
 
     var portIn1 = {
         // id: 'abc', // generated if `id` value is not present
@@ -179,11 +187,11 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         Z: 'auto'
     };
     let portInA = JSON.parse(JSON.stringify(portIn1));
-    //portInA.markup= '<rect width="16" height="16" y="-8" fill="green" />';
+    // portInA.markup= '<circle r="10" fill="blue" stroke="green" cx="-10" />';
     portInA.label.markup = '<text class="label-text" fill="#e68a00" font-size="12"/>'
     portInA.attrs.text.text = 'A';
     let portInB = JSON.parse(JSON.stringify(portIn1));
-    //portInB.markup= '<rect width="16" height="16" y="-8" fill="green" />';
+    // portInB.markup= '<circle r="10" fill="blue" stroke="green" cx="-10" />';
     portInB.label.markup = '<text class="label-text" fill="#0073e6" font-size="12"/>'
     portInB.attrs.text.text = 'B';
 
@@ -191,6 +199,10 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         position: {
             x: 10,
             y: 10,
+        },
+        minimalSize: {
+            width: 100,
+            height: 130,
         },
         size: {
             width: 100,
@@ -220,6 +232,10 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         position: {
             x: 160,
             y: 10,
+        },
+        minimalSize: {
+            width: 100,
+            height: 130,
         },
         size: {
             width: 100,
@@ -252,18 +268,22 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             x: 290,
             y: 10,
         },
+        minimalSize: {
+            width: 120,
+            height: 125,
+        },
         size: {
-            width: 100,
-            height: 155,
+            width: 120,
+            height: 125,
         },
         template: [
             '<div class="epa-element" >',
-            '<h4 style="background: coral"> Filter </h4>',
+            '<h4 style="background: #f1553b"> Filter </h4>',
             '<form>',
             '<label for="filterName">FilterName:</label>',
             '<input type="text" name="filterName"><br>',
             '<label for="filterFunction">FilterFunction:</label>',
-            '<textarea name="filterFunction" rows="5" placeholder="event.count>50"></textarea>',
+            '<textarea name="filterFunction" rows="3" placeholder="event.count>50"></textarea>',
             '</form>',
             '</div>'
         ].join(''),
@@ -273,12 +293,16 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
     var epa_translate = new joint.shapes.cep.Element({
         position: {
-            x: 440,
+            x: 460,
             y: 10,
+        },
+        minimalSize: {
+            width: 120,
+            height: 160,
         },
         size: {
             width: 120,
-            height: 220,
+            height: 160,
         },
         template: [
             '<div class="epa-element" >',
@@ -291,7 +315,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             //'<label for="referenceName">ReferenceName:</label>',
             //'<input type="text" name="referenceName"><br>',
             '<label for="derivationFunction">DerivationFunction:</label>',
-            '<textarea name="derivationFunction" rows="7" placeholder="Out.temperatureF := event.temperatureC * 9/5 + 32"></textarea>',
+            '<textarea name="derivationFunction" rows="3" placeholder="Out.temperatureF := event.temperatureC * 9/5 + 32"></textarea>',
             '</form>',
             '</div>'
         ].join(''),
@@ -300,12 +324,16 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
     var epa_enrich = new joint.shapes.cep.Element({
         position: {
-            x: 600,
+            x: 620,
             y: 10,
+        },
+        minimalSize: {
+            width: 120,
+            height: 265,
         },
         size: {
             width: 120,
-            height: 355,
+            height: 265,
         },
         template: [
             '<div class="epa-element" >',
@@ -313,35 +341,61 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             '<form>',
             '<label for="enrichName">EnrichName:</label>',
             '<input type="text" name="enrichName"><br>',
-            '<label for="outputEventType">OutputEventType:</label>',
-            '<input type="text" name="outputEventType"><br>',
+            // '<label for="outputEventType">OutputEventType:</label>',
+            // '<input type="text" name="outputEventType"><br>',
+            '<label for="enrichMode">Mode:</label>',
+            '<select name="enrichMode">',
+            '<option>append</option>',
+            '<option>replace</option>',
+            '</select><br>',
             '<label for="derivationFunction">DerivationFunction:</label>',
-            '<textarea name="derivationFunction" rows="7" placeholder="Out.temperatureF := Ref.temperatureC * 9/5 + 32"></textarea>',
+            '<textarea name="derivationFunction" rows="3" placeholder="Out.temperatureF := Ref.temperatureC * 9/5 + 32"></textarea>',
             '<label for="referenceName">ReferenceName:</label>',
             '<input type="text" name="referenceName" placeholder="TrainData"><br>',
             '<label for="refQueryFunction">RefQueryFunction:</label>',
-            '<textarea name="refQueryFunction" rows="5" placeholder="TrainData.find(and(eq(trainSectionId,event.TrainSection),eq(endStationId,event.EndStationId),eq(plannedArrivalTimeEndStation,event.PlannedArrivalTimeEndStation))).sort(ascending(plannedEventTime))"></textarea>',
+            '<textarea name="refQueryFunction" rows="3" placeholder="TrainData.find(and(eq(trainSectionId,event.TrainSection),eq(endStationId,event.EndStationId),eq(plannedArrivalTimeEndStation,event.PlannedArrivalTimeEndStation))).sort(ascending(plannedEventTime))"></textarea>',
             '</form>',
             '</div>'
         ].join(''),
     });
     epa_enrich.addPorts([portIn1,portOut1]);
 
+    let contextTemplate = [
+        '<label for="contextDimension">ContextDimension:</label>',
+        '<select name="contextDimension">',
+        '<option>Temporal</option>',
+        '</select><br>',
+        '<label for="contextType">ContextType:</label>',
+        '<select name="contextType">',
+        '<option>Fixed Interval</option>',
+        '<option>Event Interval</option>',
+        '<option>Sliding Fixed Interval</option>',
+        '<option>Sliding Event Interval</option>',
+        '</select><br>',
+        '<label for="contextFunction">ContextFunction:</label>',
+        '<input type="text" name="contextFunction" placeholder="t+kr<=o(e)<t+kr+d"><br>',
+    ].join('')
+
     var epa_pattern = new joint.shapes.cep.Element({
         position: {
-            x: 775,
+            x: 795,
             y: 10,
+        },
+        minimalSize: {
+            width: 120,
+            height: 335,
         },
         size: {
             width: 120,
-            height: 260,
+            height: 335,
         },
         template: [
             '<div class="epa-element" >',
-            '<h4 style="background: #bb4ca2"> Pattern </h4>',
+            '<h4 style="background: #ab60bb"> Pattern </h4>',
             '<form>',
             '<label for="patternName">PatternName:</label>',
             '<input type="text" name="patternName"><br>',
+            contextTemplate,
             '<label for="inputAEventType">InputAEventType:</label>',
             '<input type="text" name="inputAEventType"><br>',
             '<label for="inputBEventType">InputBEventType:</label>',
@@ -349,7 +403,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             '<label for="outputEventType">OutputEventType:</label>',
             '<input type="text" name="outputEventType"><br>',
             '<label for="patternFunction">PatternFunction:</label>',
-            '<textarea name="patternFunction" rows="5" placeholder="(A.count>50).followedBy(B.price<20)"></textarea>',
+            '<textarea name="patternFunction" rows="3" placeholder="(A.count>50).followedBy(B.price<20)"></textarea>',
             '</form>',
             '</div>'
         ].join(''),
@@ -357,19 +411,195 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
     epa_pattern.addPorts([portInA,portInB,portOut1])
 
+    var epa_aggregate = new joint.shapes.cep.Element({
+        position: {
+            x: 970,
+            y: 10,
+        },
+        minimalSize: {
+            width: 120,
+            height: 335,
+        },
+        size: {
+            width: 120,
+            height: 335,
+        },
+        template: [
+            '<div class="epa-element" >',
+            '<h4 style="background: #0c926e"> Aggregate </h4>',
+            '<form>',
+            '<label for="AggregateName">AggregateName:</label>',
+            '<input type="text" name="AggregateName"><br>',
+            contextTemplate,
+            '<label for="inputAEventType">InputAEventType:</label>',
+            '<input type="text" name="inputAEventType"><br>',
+            '<label for="inputBEventType">InputBEventType:</label>',
+            '<input type="text" name="inputBEventType"><br>',
+            '<label for="outputEventType">OutputEventType:</label>',
+            '<input type="text" name="outputEventType"><br>',
+            '<label for="patternFunction">PatternFunction:</label>',
+            '<textarea name="patternFunction" rows="3" placeholder="(A.count>50).followedBy(B.price<20)"></textarea>',
+            '</form>',
+            '</div>'
+        ].join(''),
+    });
+
+    epa_aggregate.addPorts([portIn1,portOut1])
+
+    var epa_split = new joint.shapes.cep.Element({
+        position: {
+            x: 1140,
+            y: 10,
+        },
+        minimalSize: {
+            width: 120,
+            height: 255,
+        },
+        size: {
+            width: 120,
+            height: 255,
+        },
+        template: [
+            '<div class="epa-element" >',
+            '<h4 style="background: #e8cce8"> Split </h4>',
+            '<form>',
+            '<label for="splitName" class="A">SplitName:</label>',
+            '<input type="text" name="splitName"><br>',
+            '<div class="section-a">',
+            '<div class="inline-field">',
+            '<label for="projectA" >ProjectOutputA:</label>',
+            '<input type="checkbox" name="projectA"><br>',
+            '</div>',
+            '<label for="projectAMode" class="A">ProjectionModeA:</label>',
+            '<select name="projectAMode">',
+            '<option>keep</option>',
+            '<option>omit</option>',
+            '</select><br>',
+            '<label for="projectAAttr" class="A">ProjectionAttrA:</label>',
+            '<input type="text" name="projectAAttr"><br>',
+            '</div>',
+            '<div class="section-b">',
+            '<div class="inline-field">',
+            '<label for="projectB" class="checkbox-inline">ProjectOutputB:',
+            '<input type="checkbox" name="projectB"></label><br>',
+            '</div>',
+            '<label for="projectBMode" class="B">ProjectionModeB:</label>',
+            '<select name="projectBMode">',
+            '<option>keep</option>',
+            '<option>omit</option>',
+            '</select><br>',
+            '<label for="projectBAttr" class="B">ProjectionAttrB:</label>',
+            '<input type="text" name="projectBAttr"><br>',
+            '</div>',
+            '</form>',
+            '</div>'
+        ].join(''),
+    });
+    epa_split.addPorts([portIn1,portOutA,portOutB]);
+
+    var epa_compose = new joint.shapes.cep.Element({
+        position: {
+            x: 1310,
+            y: 10,
+        },
+        minimalSize: {
+            width: 120,
+            height: 425,
+        },
+        size: {
+            width: 120,
+            height: 425,
+        },
+        template: [
+            '<div class="epa-element" >',
+            '<h4 style="background: #d7e726"> Compose </h4>',
+            '<form>',
+            '<label for="composeName" class="A">SplitName:</label>',
+            '<input type="text" name="composeName"><br>',
+            contextTemplate,
+            '<label for="composeFunction">JoinFunction:</label>',
+            '<textarea name="composeFunction" rows="3" placeholder="A.Country=B.Destination"></textarea>',
+            '<div class="section-a">',
+            '<div class="inline-field">',
+            '<label for="projectA" >ProjectInputA:</label>',
+            '<input type="checkbox" name="projectA"><br>',
+            '</div>',
+            '<label for="projectAMode" class="A">ProjectionModeA:</label>',
+            '<select name="projectAMode">',
+            '<option>keep</option>',
+            '<option>omit</option>',
+            '</select><br>',
+            '<label for="projectAAttr" class="A">ProjectionAttrA:</label>',
+            '<input type="text" name="projectAAttr"><br>',
+            '</div>',
+            '<div class="section-b">',
+            '<div class="inline-field">',
+            '<label for="projectB" class="checkbox-inline">ProjectInputB:',
+            '<input type="checkbox" name="projectB"></label><br>',
+            '</div>',
+            '<label for="projectBMode" class="B">ProjectionModeB:</label>',
+            '<select name="projectBMode">',
+            '<option>keep</option>',
+            '<option>omit</option>',
+            '</select><br>',
+            '<label for="projectBAttr" class="B">ProjectionAttrB:</label>',
+            '<input type="text" name="projectBAttr"><br>',
+            '</div>',
+            '</form>',
+            '</div>'
+        ].join(''),
+    });
+    epa_compose.addPorts([portInA,portInB,portOut1]);
+
+    var epa_project = new joint.shapes.cep.Element({
+        position: {
+            x: 1470,
+            y: 10,
+        },
+        minimalSize: {
+            width: 120,
+            height: 130,
+        },
+        size: {
+            width: 120,
+            height: 130,
+        },
+        template: [
+            '<div class="epa-element" >',
+            '<h4 style="background: #22adc6"> Project </h4>',
+            '<form>',
+            '<label for="projectName" >ProjectName:</label>',
+            '<input type="text" name="projectName"><br>',
+            '<label for="projectMode" >ProjectionMode:</label>',
+            '<select name="projectMode">',
+            '<option>keep</option>',
+            '<option>omit</option>',
+            '</select><br>',
+            '<label for="projectAttr" class="A">ProjectionAttr:</label>',
+            '<input type="text" name="projectAttr"><br>',
+            '</form>',
+            '</div>'
+        ].join(''),
+    });
+    epa_project.addPorts([portIn1,portOut1]);
+
     let epa_generic = new joint.shapes.cep.Element({
-            position: {
-                x: 950,
-                y: 10,
-            },
-            size: {
-                width: 120,
-                height: 290,
-            },
+        position: {
+            x: 1620,
+            y: 10,
+        },
+        minimalSize: {
+            width: 120,
+            height: 290,
+        },
+        size: {
+            width: 120,
+            height: 290,
+        },
     });
     epa_generic.addPorts([portIn1,portOut1]);
 
-    editorElementToolBarGraph.addCells([epa_source, epa_sink, epa_filter, epa_translate,epa_pattern, epa_enrich,epa_generic ]);
+    editorElementToolBarGraph.addCells([epa_source, epa_sink, epa_filter, epa_translate,epa_pattern, epa_enrich, epa_aggregate, epa_split, epa_compose, epa_project, epa_generic ]);
 
     editorElementToolBarPaper.on('cell:pointerdown', function(cellView, evt, x, y) {
         $('body').append('<div id="flyPaper" style="position:fixed;z-index:100;opacity:.7;pointer-event:none;"></div>');
@@ -396,22 +626,24 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             top: evt.pageY - offset.y
         });
 
-        $('body').on('mousemove.fly', function(e) {
+        $('body').on('mousemove.fly', function(evt) {
             $("#flyPaper").offset({
-                left: e.pageX - offset.x,
-                top: e.pageY - offset.y
+                left: evt.pageX - offset.x,
+                top: evt.pageY - offset.y
             });
         });
-        $('body').on('mouseup.fly', function(e) {
-            var x = e.pageX,
-                y = e.pageY,
+        $('body').on('mouseup.fly', function(evt) {
+            var x = evt.pageX,
+                y = evt.pageY,
                 target = paper.$el.offset();
 
             // Dropped over paper ?
             if (x > target.left && x < target.left + paper.$el.width() && y > target.top && y < target.top + paper.$el.height()) {
-                var s = flyShape.clone();
-                s.position(x - target.left - offset.x, y - target.top - offset.y);
-                CEPMODEMON.graph.addCell(s);
+                var shape = flyShape.clone();
+                shape.position(x - target.left - offset.x, y - target.top - offset.y);
+                let shapeSize = shape.get('size');
+                shape.resize(shapeSize.width*2,shapeSize.height);
+                CEPMODEMON.graph.addCell(shape);
             }
             $('body').off('mousemove.fly').off('mouseup.fly');
             flyShape.remove();

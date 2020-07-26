@@ -307,6 +307,20 @@ EditorEvents.init = function (paper, info, CEPMODEMON) {
         //TODO remove listener etc
     })
 
+    paper.on('cepElement:resize', function (elementView, evt) {
+        evt.stopPropagation();
+        console.log('element resize button pressed')
+        let currentSize = elementView.model.get('size');
+        let minimalSize = elementView.model.get('minimalSize');
+        if(currentSize.width !== minimalSize.width) {
+            elementView.model.resize(minimalSize.width,minimalSize.height);
+        } else {
+            elementView.model.resize(minimalSize.width*2,minimalSize.height);
+        }
+
+        //TODO remove listener etc
+    })
+
     //WIP Minification of EPAs
     paper.on('element:button:pointerdown', function(elementView, evt) {
         evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)
@@ -314,24 +328,32 @@ EditorEvents.init = function (paper, info, CEPMODEMON) {
         var model = elementView.model;
 
         //Open Delete Menu
-        if(model.attr('removeLabel/visibility') === 'visible') {
+        if(model.menu === 'visible') {
             model.attr('removeLabel/visibility', 'hidden');
             model.attr('removeButton/visibility', 'hidden');
+            model.attr('resizeLabel/visibility', 'hidden');
+            model.attr('resizeButton/visibility', 'hidden');
+            model.attr('buttonLabel/text', '＋'); // fullwidth plus
+            model.menu = 'hidden';
         } else {
             model.attr('removeLabel/visibility', 'visible');
             model.attr('removeButton/visibility', 'visible');
+            model.attr('resizeLabel/visibility', 'visible');
+            model.attr('resizeButton/visibility', 'visible');
+            model.attr('buttonLabel/text', '－'); // fullwidth minus
+            model.menu = 'visible';
         }
 
         //Foldin the EPA
-        if (model.attr('body/visibility') === 'visible') {
+        if (model.menu === 'visible') {
+            //model.attr('buttonLabel/text', '－'); // fullwidth minus
             // model.attr('body/visibility', 'hidden');
             // model.attr('label/visibility', 'hidden');
-            model.attr('buttonLabel/text', '＋'); // fullwidth plus
 
         } else {
             // model.attr('body/visibility', 'visible');
             // model.attr('label/visibility', 'visible');
-            model.attr('buttonLabel/text', '＿'); // fullwidth underscore
+            model.attr('buttonLabel/text', '＋'); // fullwidth plus
         }
     });
 }

@@ -251,11 +251,12 @@ CepElements.init = function() {
                     refY: '-50%',
                     textAnchor: 'middle',
                     textVerticalAnchor: 'middle',
-                    text: '＿', // fullwidth underscore
+                    text: '＋', // fullwidth underscore
                     fill: 'black',
                     fontSize: 8,
                     fontWeight: 'bold'
-                },removeLabel: {
+                },
+                removeLabel: {
                     pointerEvents: 'none',
                     ref: 'body',
                     refX: '50%',
@@ -282,6 +283,35 @@ CepElements.init = function() {
                     xAlignment: 'middle',
                     yAlignment: 'middle',
                     fill: '#ff0000',
+                    visibility: 'hidden',
+                },
+                resizeLabel: {
+                    pointerEvents: 'none',
+                    ref: 'body',
+                    refX: '-50%',
+                    refY: '-50%',
+                    refX2: 20,
+                    refY2: -10,
+                    fill: '#000000',
+                    text: '＋/－',
+                    fontSize: 12,
+                    visibility: 'hidden',
+                    /*textAnchor: 'middle',*/
+                    // xAlignment: 'middle',
+                    // yAlignment: 'middle',
+                },
+                resizeButton: {
+                    cursor: 'pointer',
+                    event: 'cepElement:resize',
+                    ref: 'resizeLabel',
+                    refR: '90%',
+                    refX: '50%',
+                    // refCx: '100%',
+                    // refCy: '100%',
+                    refY: '50%',
+                    xAlignment: 'middle',
+                    yAlignment: 'middle',
+                    fill: '#fff200',
                     visibility: 'hidden',
                 },
             },
@@ -333,14 +363,15 @@ CepElements.init = function() {
                     }
                 }
             },
+            menu: 'hidden',
             template: [
                 '<div class="epa-element" >',
-                '<h4 style="background: darkorange"> Generic EPA </h4>',
+                '<h4 style="background: #ffffff"> Generic EPA </h4>',
                 '<form>',
                 '<label for="epaName">EPAName:</label>',
                 '<input type="text" id="epaName" name="epaName"><br>',
-                '<label for="genericEpaFunction">GenericEPAFunction:</label>',
-                '<textarea name="genericEpaFunction" rows="5" placeholder="someNotes"></textarea>',
+                '<label for="genericEpaFunction">GenericFunction:</label>',
+                '<textarea name="genericEpaFunction" rows="5" placeholder="purpose or function"></textarea>',
                 '<label for="referenceName">ReferenceName:</label>',
                 '<input type="text" name="referenceName" placeholder="PlannedTrainData"><br>',
                 '<label for="refQueryFunction">RefQueryFunction:</label>',
@@ -364,6 +395,12 @@ CepElements.init = function() {
             }, {
                 tagName: 'text',
                 selector: 'removeLabel',
+            },{
+                tagName: 'circle',
+                selector: 'resizeButton'
+            }, {
+                tagName: 'text',
+                selector: 'resizeLabel',
             }, foLabelMarkup ],
 
             initialize: function() {
