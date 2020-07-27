@@ -1,10 +1,11 @@
 {
   "name": "cepmodelingmonitor",
-  "version": "0.0.1",
+  "version": "0.2.2",
   "description": "model cep pipelines and monitor them through kafka topics",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon -e js,html -V server.js",
+    "start": "node server.js",
+    "dev": "nodemon -e js,html -V server.js",
     "debug": "nodemon --inspect -e js,html -V server.js",
     "build_proto": "protoc --js_out=import_style=commonjs,binary:./src/protos ./models/events/Aggregate.proto"
   },
