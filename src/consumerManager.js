@@ -1,8 +1,5 @@
-// import kafka from "kafka-node";
-// import socket from "socket.io"
 var kafka = require("kafka-node");
 var aggregateEvent = require("./protos/models/events/Aggregate_pb");
-// var constants = require("./constants.js");
 var io;
 const AGGREGATED_PREFIX = "MONITOR_AGGREGATED_";
 const MONITOR_PREFIX = "MONITOR_";

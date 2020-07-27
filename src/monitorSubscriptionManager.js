@@ -1,8 +1,5 @@
-// import kafka from "kafka-node";
-// import socket from "socket.io"
-// import protobuf from "protobufjs"
 import * as constants from "./constants.js"
-// import moment from "moment"
+
 export const MonitorSubscriptionManager = new Object();
 MonitorSubscriptionManager.registry = new Object({
     streamToLinksLookup: new Map(),
@@ -308,4 +305,3 @@ MonitorSubscriptionManager.unregisterLinkFromStream = function (linkKey, oldStre
     oldStreamLinkSet.delete(linkKey)
     socket.emit('deleteConsumer', oldStreamName);
 }
-// module.exports = Subscriber;

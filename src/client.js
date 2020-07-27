@@ -1,4 +1,3 @@
-// import {CEPLink} from "./customlink.js";
 import {EditorEvents} from "./editorEvents.js";
 import {CepElements} from "./cepElement.js";
 
@@ -693,15 +692,6 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     info.addTo(CEPMODEMON.graph);
 
     EditorEvents.init(paper, info, CEPMODEMON);
-
-    /*var cep = new joint.shapes.cep.Element();
-    cep.resize(100, 100);
-    cep.position(500, 610);
-    cep.attr('option1/text', 'one');
-    cep.attr('option2/text', 'two');
-    cep.addPort(portOut1);
-    cep.addPort(portIn1);
-    cep.addTo(CEPMODEMON.graph);*/
 
 }
 $(document).ready( function() {

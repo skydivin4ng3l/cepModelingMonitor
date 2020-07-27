@@ -1,4 +1,3 @@
-// import { Element } from 'jointjs/src/dia/Element'
 
 export const CepElements = new Object()
 CepElements.init = function() {
