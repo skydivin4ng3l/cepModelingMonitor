@@ -378,7 +378,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
     var epa_pattern = new joint.shapes.cep.Element({
         position: {
-            x: 795,
+            x: 785,
             y: 10,
         },
         minimalSize: {
@@ -413,32 +413,38 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
     var epa_aggregate = new joint.shapes.cep.Element({
         position: {
-            x: 970,
+            x: 960,
             y: 10,
         },
         minimalSize: {
             width: 120,
-            height: 335,
+            height: 340,
         },
         size: {
-            width: 120,
-            height: 335,
+            width: 130,
+            height: 340,
         },
         template: [
             '<div class="epa-element" >',
             '<h4 style="background: #0c926e"> Aggregate </h4>',
             '<form>',
-            '<label for="AggregateName">AggregateName:</label>',
-            '<input type="text" name="AggregateName"><br>',
-            contextTemplate,
-            '<label for="inputAEventType">InputAEventType:</label>',
-            '<input type="text" name="inputAEventType"><br>',
-            '<label for="inputBEventType">InputBEventType:</label>',
-            '<input type="text" name="inputBEventType"><br>',
+            '<label for="aggregateName">AggregateName:</label>',
+            '<input type="text" name="aggregateName"><br>',
+            '<label for="aggregateType">AggregateFunction:</label>',
+            '<select name="aggregateType">',
+            '<option>Sum</option>',
+            '<option>Maximum</option>',
+            '<option>Minimum</option>',
+            '<option>Average</option>',
+            '<option>Custom</option>',
+            '</select><br>',
+            '<label for="aggregateAttributes">AggregationAttributes:</label>',
+            '<input type="text" name="aggregateAttributes"><br>',
+            '<label for="customAggregateFunction">CustomFunction:</label>',
+            '<textarea name="customAggregateFunction" rows="3" ></textarea>',
             '<label for="outputEventType">OutputEventType:</label>',
             '<input type="text" name="outputEventType"><br>',
-            '<label for="patternFunction">PatternFunction:</label>',
-            '<textarea name="patternFunction" rows="3" placeholder="(A.count>50).followedBy(B.price<20)"></textarea>',
+            contextTemplate,
             '</form>',
             '</div>'
         ].join(''),
@@ -514,7 +520,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
             '<div class="epa-element" >',
             '<h4 style="background: #d7e726"> Compose </h4>',
             '<form>',
-            '<label for="composeName" class="A">SplitName:</label>',
+            '<label for="composeName" class="A">ComposeName:</label>',
             '<input type="text" name="composeName"><br>',
             contextTemplate,
             '<label for="composeFunction">JoinFunction:</label>',
