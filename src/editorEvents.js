@@ -12,6 +12,7 @@ EditorEvents.initNavBar = function() {
         '<button type="button" id="monitorStopButton" class="monitorStopButton" > Stop Monitoring</button>',
         '<button type="button" id="zoomInButton" class="zoomInButton" > Zoom In</button>',
         '<button type="button" id="zoomOutButton" class="zoomOutButton" > Zoom Out</button>',
+        '<button type="button" id="drawerToggleButton" class="drawerToggleButton" > Toggle Drawer AutoHide</button>',
     ].join(''))
     $('#saveButton').bind('click', EditorEvents.navSaveButton);
     $('#loadButton').bind('click', EditorEvents.navLoadButton);
@@ -19,6 +20,23 @@ EditorEvents.initNavBar = function() {
     $('#monitorStopButton').bind('click', EditorEvents.navStopMonitoringButton);
     $('#zoomInButton').bind('click', EditorEvents.navZoomInButton);
     $('#zoomOutButton').bind('click', EditorEvents.navZoomOutButton);
+    $('#drawerToggleButton').bind('click', EditorEvents.navToggleDrawerButton);
+    //Drawer Auto Hide
+    $( "div.enterleave" )
+        .mouseenter(function() {
+            // console.log("Enter")
+            if (EditorEvents.drawerAutoHide) {
+                $('#containerToolBar').height(300)
+                $('#container').height('75vh')
+            }
+        })
+        .mouseleave(function() {
+            // console.log("leave")
+            if (EditorEvents.drawerAutoHide) {
+                $('#containerToolBar').height(60)
+                $('#container').height('100vh')
+            }
+        });
 }
 EditorEvents.saveToFile= function(content, fileName, contentType){
     var a = document.createElement("a");
@@ -99,6 +117,19 @@ EditorEvents.navZoomOutButton = function(){
     if (currentScale <= 0.2) { return }
     let newScale = currentScale -0.1;
     EditorEvents.paper.scale(newScale,newScale )
+}
+EditorEvents.drawerAutoHide = false;
+EditorEvents.navToggleDrawerButton = function(){
+    if (EditorEvents.drawerAutoHide) {
+        EditorEvents.drawerAutoHide = false;
+        $('#containerToolBar').height(300);
+        $('#container').height('75vh');
+    } else {
+        $('#containerToolBar').height(60);
+        $('#container').height('100vh');
+        EditorEvents.drawerAutoHide = true;
+    }
+
 }
 
 
