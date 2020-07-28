@@ -11,11 +11,11 @@ MonitorSubscriptionManager.eventCountThresholds = new Object({
 });
 MonitorSubscriptionManager.startMonitoring = function() {
     socket.on("kafkaMonitor", function (kafkaMessage) {
-        console.log(kafkaMessage);
+        // console.log(kafkaMessage);
         MonitorSubscriptionManager.distributeEvents(kafkaMessage, false);
     });
     socket.on("kafkaAggregated", function (kafkaMessage) {
-        console.log(kafkaMessage);
+        // console.log(kafkaMessage);
         MonitorSubscriptionManager.distributeEvents(kafkaMessage, true);
     });
     socket.emit("startMonitoring");
@@ -124,7 +124,7 @@ MonitorSubscriptionManager.initChart= function(canvasContainerId) {
     let chartConfig = {
         type : 'line',
         data : {
-            labels : [],
+            //labels : [],
             datasets : [ {
                 // label : 'EventCountPer5Sec',
                 backgroundColor : 'rgb(255, 99, 132)',
@@ -147,7 +147,7 @@ MonitorSubscriptionManager.initChart= function(canvasContainerId) {
             tooltips : {
                 mode : 'index',
                 intersect : false,
-                axis: 'x',
+                //axis: 'x',
                 position: 'nearest',
             },
             hover : {
