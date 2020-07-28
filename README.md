@@ -38,25 +38,37 @@ Clone CEPTA Monitoring Version and configure your Mongo Database connection (Tra
 git clone --depth 1 --branch CEPModeMon git@github.com:bptlab/cepta.git
 cd cepta
 ```
-Start your prepared Mongo DB Container as State (optional) with Replay collection with station data
+Start your prepared Mongo DB Container as State (optional) with Replay collection with station data:
 ```shell script
 ./deployment/dev/devenv.sh up mongo 
 ```
- Build CEPTA Images and Run CEPTA Core in Docker
+ Build CEPTA Images and Run CEPTA Core with Pre-Processor Service (cepmodemon) in Docker:
  ```shell script
  BUILD=1 ./deployment/dev/devenv.sh up --force-recreate kafka zookeeper kafdrop cepmodemon
 ```
 When Kafdrop Broker is reachable on [http://localhost:9001/](http://localhost:9001/) proceed with the **Start Of CEPModeMon** and continue here
 
-2. In CEPModeMon click "Load"
-3. Choose ```./examples/CEPTA.json```
-4. In CEPModeMon click "Start Monitoring"
-1. Start the CEPTA Replayer (replace ```--mongo-port ``` option with your Datasource for TrainData ) 
+2. In CEPModeMon click "Load".
+3. Choose: ```./examples/CEPTA.json```
+4. In CEPModeMon click "Start Monitoring".
+1. Start the CEPTA Replayer (replace ```--mongo-port ``` option with your Datasource for TrainData ). 
 ```shell script
 bazel run //auxiliary/producers/replayer:replayer --port 8083 --replay-log debug --pause 100 --mode proportional --no-repeat --mongodb-port 27018 --immediate --include-sources PLANNED_TRAIN_DATA,LIVE_TRAIN_DATA
 ``` 
 Now you should see after a while that the line charts display the aggregated Event Count (per 5 second windows) on the Event Streams and individual Events along the Event Streams, like this:  
 <img src="examples/CEPMM_CEPTA_EPN.png?raw=true" alt="Model and Monitor Example" width="600" height="whatever"> 
+####Note
+If not all Streams get aggregate information the Pre-Processor might have missed the others on start up:
+ Close everything and restart but Run Core and Pre-Processor separately:
+ ```shell script
+./deployment/dev/devenv.sh up --force-recreate kafka zookeeper kafdrop core
+```
+After Kafdrop is reachable:
+```shell script
+./deployment/dev/devenv.sh up cepmodemon
+```
+Proceed with **Start of CEPModeMon**.
+
 ##  Start CEPModeMon
 In the root of CEPModeMon:
 ```shell script
@@ -79,9 +91,9 @@ npm run build_proto
 * Actions like rename of Stream labels or Load cannot be canceled.
 * Continue Monitoring after a Stop will not reset the Old Monitoring Data.
 * Zooming may influence insertion of new Elements, if not on neutral zoom level.
-* If not all Streams get aggregate information the Pre-Processor might have missed the others on startup. Restart the Docker Environment.
+* Pre-Processor might start too early.
 * Chartjs labels might not work correctly.
-* No Security precautions in any way
+* No Security precautions in any way.
 
 ## Example Architecture
 CEPModeMons monitoring capabilities require an architecture like this: 
