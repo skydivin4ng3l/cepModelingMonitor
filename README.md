@@ -53,7 +53,7 @@ When Kafdrop Broker is reachable on [http://localhost:9001/](http://localhost:90
 4. In CEPModeMon click "Start Monitoring".
 1. Start the CEPTA Replayer (replace ```--mongo-port ``` option with your Datasource for TrainData ). 
 ```shell script
-bazel run //auxiliary/producers/replayer:replayer --port 8083 --replay-log debug --pause 100 --mode proportional --no-repeat --mongodb-port 27018 --immediate --include-sources PLANNED_TRAIN_DATA,LIVE_TRAIN_DATA
+bazel run -- //auxiliary/producers/replayer:replayer --port 8083 --replay-log debug --pause 100 --mode proportional --no-repeat --mongodb-port 27018 --immediate --include-sources PLANNED_TRAIN_DATA,LIVE_TRAIN_DATA
 ``` 
 Now you should see after a while that the line charts display the aggregated Event Count (per 5 second windows) on the Event Streams and individual Events along the Event Streams, like this:  
 <img src="examples/CEPMM_CEPTA_EPN.png?raw=true" alt="Model and Monitor Example" width="600" height="whatever"> 
