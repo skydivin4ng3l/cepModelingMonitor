@@ -214,7 +214,7 @@ ConsumerManager.initMonitorConsumer = function() {
     }
 
     this.consumer.monitor.on("message", function (message) {
-        console.log("message",message);
+        // console.log("message",message);
         var buf = Buffer.from(message.value, 'binary');
 
         /*var decodedMessage = aggregateEvent.Aggregate.deserializeBinary(buf);
@@ -256,18 +256,17 @@ ConsumerManager.initAggregateConsumer = function() {
     }
 
     this.consumer.aggregate.on("message", function (message) {
-        console.log("message",message);
+        // console.log("message",message);
         var buf = Buffer.from(message.value, 'binary');
-        //if(message.topic)
 
-            var decodedMessage = aggregateEvent.Aggregate.deserializeBinary(buf);
-            console.log("decodedMessage",decodedMessage)
-            console.log(message.topic,"value",decodedMessage.getVolume(), "time",decodedMessage.getTime())
-            let kafkaMessage = new Object({
-                topic: message.topic,
-                value: decodedMessage.getVolume(),
-                time: decodedMessage.getTime()
-            })
+        var decodedMessage = aggregateEvent.Aggregate.deserializeBinary(buf);
+        // console.log("decodedMessage",decodedMessage)
+        console.log(message.topic,"value",decodedMessage.getVolume(), "time",decodedMessage.getTime())
+        let kafkaMessage = new Object({
+            topic: message.topic,
+            value: decodedMessage.getVolume(),
+            time: decodedMessage.getTime()
+        })
         io.emit("kafkaAggregated", kafkaMessage/*decodedMessage.getVolume()*/);
 
     });
