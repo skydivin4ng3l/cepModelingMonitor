@@ -49,8 +49,8 @@ When Kafdrop Broker is reachable on [http://localhost:9001/](http://localhost:90
 ```shell script
 bazel run //auxiliary/producers/replayer:replayer --port 8083 --replay-log debug --pause 100 --mode proportional --no-repeat --mongodb-port 27018 --immediate --include-sources PLANNED_TRAIN_DATA,LIVE_TRAIN_DATA
 ``` 
-Now you should see after a while that the line charts display the aggregated Event Count (per 5 second windows) on the Event Streams and individual Events along the Event Streams, like this:
-<img src="examples/CEPMM_CEPTA_EPN.png?raw=true" alt="Model & Monitor Example" width="200" height="whatever"> 
+Now you should see after a while that the line charts display the aggregated Event Count (per 5 second windows) on the Event Streams and individual Events along the Event Streams, like this:  
+<img src="examples/CEPMM_CEPTA_EPN.png?raw=true" alt="Model and Monitor Example" width="400" height="whatever"> 
 ##  Start CEPModeMon
 In the root of CEPModeMon:
 ```shell script
@@ -70,8 +70,9 @@ npm run build_proto
 ```
 
 ## Example Architecture
-CEPModeMons monitoring capabilities require an architecture like this:  
-<img src="examples/HighlevelCEPModeMon.png?raw" alt="Architecture of CEPModeMon" width="400" height="whatever">  
+CEPModeMons monitoring capabilities require an architecture like this: 
+
+<img src="examples/HighlevelCEPModeMon.png?raw" alt="Architecture of CEPModeMon" width="600" height="whatever">  
 
 This repository contains the Modelling and Monitoring Tool. It serves as a high level Consumer in the necessary Monitoring CEP Pipeline. Other components are necessary to get the Monitoring-Data and to pre-process the data before visualisation in CEPModeMon.
 
@@ -85,11 +86,11 @@ or per Docker Container ```cepmodemon/prepro:v0.1.9```
 
 ## Available Modelling Components
 Drag'n'drop-able atomic conceptional Consumers, Producers and mostly Event Processing Agentss.  
-<img src="examples/allEPAs1.png?raw" alt="AllEPAs1" width="400" height="whatever">
-<img src="examples/allEPAs2.png?raw" alt="AllEPAs2" width="400" height="whatever">
+<img src="examples/allEPAs1.png?raw" alt="AllEPAs1" width="600" height="whatever">  
+<img src="examples/allEPAs2.png?raw" alt="AllEPAs2" width="600" height="whatever">
 
 For scale toggling or element deletion use the **+** on the upper left.
 
-<img src="examples/EPAMenu.png?raw" alt="EPAMenu" width="100" height="whatever">
+<img src="examples/EPAMenu.png?raw" alt="EPAMenu" width="300" height="whatever">
 
 
