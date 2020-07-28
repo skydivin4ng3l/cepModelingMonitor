@@ -41,7 +41,7 @@ MonitorSubscriptionManager.distributeEvents = function(kafkaMessage, aggregated)
     let subScribedLinks = this.registry.streamToLinksLookup.get(topicSuffix)
     if (aggregated) {
         for(let linkKey of subScribedLinks) {
-            this.processAggregationEvent(linkKey,kafkaMessage.value);
+            this.processAggregationEvent(linkKey,kafkaMessage.value,kafkaMessage.time);
             //testing purposes only
             //this.processMonitorEvent(linkKey)
         }
@@ -51,7 +51,7 @@ MonitorSubscriptionManager.distributeEvents = function(kafkaMessage, aggregated)
         }
     }
 }
-MonitorSubscriptionManager.processAggregationEvent= function(linkKey,eventCount) {
+MonitorSubscriptionManager.processAggregationEvent= function(linkKey,eventCount, millis) {
     let monitorObject = this.registry.linkRegister.get(linkKey)
     monitorObject.chart.config.data.datasets.forEach((dataset) =>{
         let length = dataset.data.length;
@@ -62,7 +62,7 @@ MonitorSubscriptionManager.processAggregationEvent= function(linkKey,eventCount)
         }
         dataset.data.push(
             {
-                x: new Date(),
+                x: new Date(millis),
                 y: eventCount,
             })
         let color = 'rgb( 0, 153, 51 )';
@@ -146,13 +146,14 @@ MonitorSubscriptionManager.initChart= function(canvasContainerId) {
             },
             tooltips : {
                 mode : 'index',
-                // intersect : false,
-                axis: 'x'
+                intersect : false,
+                axis: 'x',
+                position: 'nearest',
             },
-            // hover : {
-            //     mode : 'nearest',
-            //     intersect : true
-            // },
+            hover : {
+                mode : 'nearest',
+                intersect : true
+            },
             scales : {
                 xAxes : [ {
                     display : true,

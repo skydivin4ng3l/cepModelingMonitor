@@ -66,7 +66,8 @@ proto.models.events.Aggregate.prototype.toObject = function(opt_includeInstance)
  */
 proto.models.events.Aggregate.toObject = function(includeInstance, msg) {
   var f, obj = {
-    volume: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    volume: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    time: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -107,6 +108,10 @@ proto.models.events.Aggregate.deserializeBinaryFromReader = function(msg, reader
       var value = /** @type {number} */ (reader.readInt64());
       msg.setVolume(value);
       break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setTime(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -143,6 +148,13 @@ proto.models.events.Aggregate.serializeBinaryToWriter = function(message, writer
       f
     );
   }
+  f = message.getTime();
+  if (f !== 0) {
+    writer.writeInt64(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -161,6 +173,24 @@ proto.models.events.Aggregate.prototype.getVolume = function() {
  */
 proto.models.events.Aggregate.prototype.setVolume = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional int64 time = 2;
+ * @return {number}
+ */
+proto.models.events.Aggregate.prototype.getTime = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.models.events.Aggregate} returns this
+ */
+proto.models.events.Aggregate.prototype.setTime = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
