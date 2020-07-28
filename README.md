@@ -66,7 +66,7 @@ In Chrome head to [http://localhost:3000/](http://localhost:3000/)
 
 enjoy!
 ## Requirements For Development
-[nodemon](https://nodemon.io/)
+For Hot-Reload with [nodemon](https://nodemon.io/)
 ```shell script
 npm install -g nodemon
 ```
