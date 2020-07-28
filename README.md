@@ -6,16 +6,17 @@ CEPModeMon is a Prototype for a combined webapplication for modelling and monito
 ## Requirements
 Tested on Ubuntu 20.04 and Chrome 83  
 [nodejs & npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)  
-[dockercompose]()
+[dockercompose](https://docs.docker.com/compose/install/)
 
 
 ## Installation
+In the root of CEPModeMon:
 ```shell script
 npm install
 ```
 
 ## How to run
-### Modeling only
+### Option 1: Modeling only
 Start a simple kafka container
 ```shell script
 cd testenvironment
@@ -25,7 +26,7 @@ Proceed with the **Start CEPModeMon**
 
 ---
 
-### Modeling & monitoring of CEPTA
+### Option 2: Modeling & monitoring of CEPTA
 Clone CEPTA Monitoring Version and configure your Mongo Database connection (TrainData) for the Replayer.
 ```shell script
 git clone --depth 1 --branch CEPModeMon git@github.com:bptlab/cepta.git
@@ -51,6 +52,7 @@ bazel run //auxiliary/producers/replayer:replayer --port 8083 --replay-log debug
 Now you should see after a while that the line charts display the aggregated Event Count (per 5 second windows) on the Event Streams and individual Events along the Event Streams, like this:
 <img src="examples/CEPMM_CEPTA_EPN.png?raw=true" alt="Model & Monitor Example" width="200" height="whatever"> 
 ##  Start CEPModeMon
+In the root of CEPModeMon:
 ```shell script
 npm run start
 ```
@@ -68,17 +70,26 @@ npm run build_proto
 ```
 
 ## Example Architecture
-CEPModeMons monitoring capabilities require an architecture like this:
-<img src="examples/HighlevelCEPModeMon.png?raw" alt="Architecture of CEPModeMon" width="400" height="whatever">
+CEPModeMons monitoring capabilities require an architecture like this:  
+<img src="examples/HighlevelCEPModeMon.png?raw" alt="Architecture of CEPModeMon" width="400" height="whatever">  
 
-This repository contains the Modelling and Monitoring Tool. It serves as a consumer in the necessary Monitoring CEP Pipeline. Other components are necessary to get the Monitoring-Data and to preprocess the data before visualisation in CEPModeMon.
+This repository contains the Modelling and Monitoring Tool. It serves as a high level Consumer in the necessary Monitoring CEP Pipeline. Other components are necessary to get the Monitoring-Data and to pre-process the data before visualisation in CEPModeMon.
 
 ### CEPTA version with Data Collector
+Serves as high level Producer.  
 The modified CEPTA version is located here: [CEPTA-with-DataCollector](https://github.com/bptlab/cepta/releases/tag/CEPModeMon)
 ### Pre-Processor
+Serves as high level Event Processing Agent.    
 The Pre-Processor is located here: [PreProcessor](https://github.com/skydivin4ng3l/CEPModeMon_prepro/releases/tag/v0.1.9)
 or per Docker Container ```cepmodemon/prepro:v0.1.9```
 
+## Available Modelling Components
+Drag'n'drop-able atomic conceptional Consumers, Producers and mostly Event Processing Agentss.  
+<img src="examples/allEPAs1.png?raw" alt="AllEPAs1" width="400" height="whatever">
+<img src="examples/allEPAs2.png?raw" alt="AllEPAs2" width="400" height="whatever">
 
+For scale toggling or element deletion use the **+** on the upper left.
+
+<img src="examples/EPAMenu.png?raw" alt="EPAMenu" width="100" height="whatever">
 
 
