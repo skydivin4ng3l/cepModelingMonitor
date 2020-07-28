@@ -26,7 +26,7 @@ Proceed with the **Start CEPModeMon**
 
 ---
 
-### Option 2: Modeling & monitoring of CEPTA
+### Option 2: Modeling & Monitoring of CEPTA
 Clone CEPTA Monitoring Version and configure your Mongo Database connection (TrainData) for the Replayer.
 ```shell script
 git clone --depth 1 --branch CEPModeMon git@github.com:bptlab/cepta.git
@@ -68,15 +68,20 @@ For rebuilding protobuf schemas you need to install [protoc](https://github.com/
 ```shell script
 npm run build_proto
 ```
+## Known Issues
+* F5 refresh in Client will reset CEPModeMon Client but not the Webserver
+* Actions like rename of Stream labels or Load cannot be canceled
+* Continue Monitoring after a Stop will not reset the Old Monitoring Data
+* Zooming may influence insertion of new Elements, if not on neutral zoom level. 
 
-## Example Architecture
+## An example Architecture
 CEPModeMons monitoring capabilities require an architecture like this: 
 
 <img src="examples/HighlevelCEPModeMon.png?raw" alt="Architecture of CEPModeMon" width="600" height="whatever">  
 
 This repository contains the Modelling and Monitoring Tool. It serves as a high level Consumer in the necessary Monitoring CEP Pipeline. Other components are necessary to get the Monitoring-Data and to pre-process the data before visualisation in CEPModeMon.
 
-### CEPTA version with Data Collector
+### CEPTA with Data Collector
 Serves as high level Producer.  
 The modified CEPTA version is located here: [CEPTA-with-DataCollector](https://github.com/bptlab/cepta/releases/tag/CEPModeMon)
 ### Pre-Processor
