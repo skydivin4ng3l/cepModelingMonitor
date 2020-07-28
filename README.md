@@ -1,7 +1,14 @@
 # CEPModeMon - Complex event Processing Monitoring & Modelling
-CEPModeMon is a Proof of Concept for a combined webapplication for modelling and monitoring Complex Event Processing Pipelines
+CEPModeMon is a Prototype for a combined webapplication for modelling and monitoring Complex Event Processing Pipelines
 
 <img src="examples/BasicGUI_2.png?raw=true" alt="Picture of the GUI" width="400" height="whatever">
+## Requirements
+### Nodejs
+
+
+
+## How to run
+
 
 ## Example Architecture
 CEPModeMons monitoring capabilities are dependant on a Monitoring-Data producer for Kafka
@@ -13,4 +20,8 @@ The Pre-Processor is located here: [PreProcessor](https://github.com/skydivin4ng
 or per Docker Container ```cepmodemon/prepro:v0.1.9```
 
 ### CEPTA version with Data Collector
-The modified CEPTA version is located here: [PreProcessor](https://github.com/bptlab/cepta/releases/tag/CEPModeMon)
+The modified CEPTA version is located here: [CEPTA-with-DataCollector](https://github.com/bptlab/cepta/releases/tag/CEPModeMon)
+
+
+## Requirements for Development
+### nodemon
