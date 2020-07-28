@@ -90,7 +90,7 @@ CEPModeMons monitoring capabilities require an architecture like this:
 
 This repository contains the Modelling and Monitoring Tool. It serves as a high level Consumer in the necessary Monitoring CEP Pipeline. Other components are necessary to get the Monitoring-Data and to pre-process the data before visualisation in CEPModeMon.
 
-### CEPTA with Data Collector
+### CEPTA Data Collector
 Serves as high level Producer.  
 The modified CEPTA version is located here: [CEPTA-with-DataCollector](https://github.com/bptlab/cepta/releases/tag/CEPModeMon)
 ### Pre-Processor
