@@ -1,4 +1,4 @@
-# CEPModeMon - Complex event Processing Monitoring & Modelling
+# CEPModeMon - Complex Event Processing Monitoring & Modelling
 CEPModeMon is a Prototype for a combined webapplication for modelling and monitoring Complex Event Processing Pipelines
 
 <img src="examples/BasicGUI_2.png?raw=true" alt="Picture of the GUI" width="600" height="whatever">
@@ -15,15 +15,15 @@ In the root of CEPModeMon:
 npm install
 ```
 
-## How to run
-### Option 1: Modeling only
+## How To Run
+### Option 1: Modeling Only
 Start a simple kafka container
 ```shell script
 cd testenvironment
 docker-compose up --force-recreate kafka zookeeper 
 ```
 Proceed with the **Start CEPModeMon**
-##### For testing purposes:
+##### For Testing Purposes:
 The Pre-Processor can be started without **Data Collector** after all Event Streams are labeled within the model.
 ```shell script
 cd testenvironment
@@ -32,7 +32,7 @@ docker-compose up cepmodemon
 
 ---
 
-### Option 2: Modeling & Monitoring of CEPTA
+### Option 2: Modeling & Monitoring Of CEPTA
 Clone CEPTA Monitoring Version and configure your Mongo Database connection (TrainData) for the Replayer.
 ```shell script
 git clone --depth 1 --branch CEPModeMon git@github.com:bptlab/cepta.git
@@ -46,7 +46,7 @@ Start your prepared Mongo DB Container as State (optional) with Replay collectio
  ```shell script
  BUILD=1 ./deployment/dev/devenv.sh up --force-recreate kafka zookeeper kafdrop cepmodemon
 ```
-When Kafdrop Broker is reachable on [http://localhost:9001/](http://localhost:9001/) proceed with the **Start of CEPModeMon** and continue here
+When Kafdrop Broker is reachable on [http://localhost:9001/](http://localhost:9001/) proceed with the **Start Of CEPModeMon** and continue here
 
 2. In CEPModeMon click "Load"
 3. Choose ```./examples/CEPTA.json```
@@ -65,7 +65,7 @@ npm run start
 In Chrome head to [http://localhost:3000/](http://localhost:3000/)
 
 enjoy!
-## Requirements for Development
+## Requirements For Development
 [nodemon](https://nodemon.io/)
 ```shell script
 npm install -g nodemon
@@ -81,8 +81,9 @@ npm run build_proto
 * Zooming may influence insertion of new Elements, if not on neutral zoom level.
 * If not all Streams get aggregate information the Pre-Processor might have missed the others on startup. Restart the Docker Environment.
 * Chartjs labels might not work correctly.
+* No Security precautions in any way
 
-## An example Architecture
+## Example Architecture
 CEPModeMons monitoring capabilities require an architecture like this: 
 
 <img src="examples/HighlevelCEPModeMon.png?raw" alt="Architecture of CEPModeMon" width="600" height="whatever">  
