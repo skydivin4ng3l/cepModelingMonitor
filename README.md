@@ -1,7 +1,7 @@
 # CEPModeMon - Complex event Processing Monitoring & Modelling
 CEPModeMon is a Prototype for a combined webapplication for modelling and monitoring Complex Event Processing Pipelines
 
-<img src="examples/BasicGUI_2.png?raw=true" alt="Picture of the GUI" width="400" height="whatever">
+<img src="examples/BasicGUI_2.png?raw=true" alt="Picture of the GUI" width="600" height="whatever">
 
 ## Requirements
 Tested on Ubuntu 20.04 and Chrome 83  
@@ -50,7 +50,7 @@ When Kafdrop Broker is reachable on [http://localhost:9001/](http://localhost:90
 bazel run //auxiliary/producers/replayer:replayer --port 8083 --replay-log debug --pause 100 --mode proportional --no-repeat --mongodb-port 27018 --immediate --include-sources PLANNED_TRAIN_DATA,LIVE_TRAIN_DATA
 ``` 
 Now you should see after a while that the line charts display the aggregated Event Count (per 5 second windows) on the Event Streams and individual Events along the Event Streams, like this:  
-<img src="examples/CEPMM_CEPTA_EPN.png?raw=true" alt="Model and Monitor Example" width="400" height="whatever"> 
+<img src="examples/CEPMM_CEPTA_EPN.png?raw=true" alt="Model and Monitor Example" width="600" height="whatever"> 
 ##  Start CEPModeMon
 In the root of CEPModeMon:
 ```shell script
