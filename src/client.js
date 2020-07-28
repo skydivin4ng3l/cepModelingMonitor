@@ -375,9 +375,41 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
         '<input type="text" name="contextFunction" placeholder="t+kr<=o(e)<t+kr+d"><br>',
     ].join('')
 
+    var epa_project = new joint.shapes.cep.Element({
+        position: {
+            x: 780,
+            y: 10,
+        },
+        minimalSize: {
+            width: 120,
+            height: 130,
+        },
+        size: {
+            width: 120,
+            height: 130,
+        },
+        template: [
+            '<div class="epa-element" >',
+            '<h4 style="background: #22adc6"> Project </h4>',
+            '<form>',
+            '<label for="projectName" >ProjectName:</label>',
+            '<input type="text" name="projectName"><br>',
+            '<label for="projectMode" >ProjectionMode:</label>',
+            '<select name="projectMode">',
+            '<option>keep</option>',
+            '<option>omit</option>',
+            '</select><br>',
+            '<label for="projectAttr" class="A">ProjectionAttr:</label>',
+            '<input type="text" name="projectAttr"><br>',
+            '</form>',
+            '</div>'
+        ].join(''),
+    });
+    epa_project.addPorts([portIn1,portOut1]);
+
     var epa_pattern = new joint.shapes.cep.Element({
         position: {
-            x: 785,
+            x: 950,
             y: 10,
         },
         minimalSize: {
@@ -410,50 +442,9 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
     epa_pattern.addPorts([portInA,portInB,portOut1])
 
-    var epa_aggregate = new joint.shapes.cep.Element({
-        position: {
-            x: 960,
-            y: 10,
-        },
-        minimalSize: {
-            width: 120,
-            height: 340,
-        },
-        size: {
-            width: 130,
-            height: 340,
-        },
-        template: [
-            '<div class="epa-element" >',
-            '<h4 style="background: #0c926e"> Aggregate </h4>',
-            '<form>',
-            '<label for="aggregateName">AggregateName:</label>',
-            '<input type="text" name="aggregateName"><br>',
-            '<label for="aggregateType">AggregateFunction:</label>',
-            '<select name="aggregateType">',
-            '<option>Sum</option>',
-            '<option>Maximum</option>',
-            '<option>Minimum</option>',
-            '<option>Average</option>',
-            '<option>Custom</option>',
-            '</select><br>',
-            '<label for="aggregateAttributes">AggregationAttributes:</label>',
-            '<input type="text" name="aggregateAttributes"><br>',
-            '<label for="customAggregateFunction">CustomFunction:</label>',
-            '<textarea name="customAggregateFunction" rows="3" ></textarea>',
-            '<label for="outputEventType">OutputEventType:</label>',
-            '<input type="text" name="outputEventType"><br>',
-            contextTemplate,
-            '</form>',
-            '</div>'
-        ].join(''),
-    });
-
-    epa_aggregate.addPorts([portIn1,portOut1])
-
     var epa_split = new joint.shapes.cep.Element({
         position: {
-            x: 1140,
+            x: 1120,
             y: 10,
         },
         minimalSize: {
@@ -504,7 +495,7 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
 
     var epa_compose = new joint.shapes.cep.Element({
         position: {
-            x: 1310,
+            x: 1290,
             y: 10,
         },
         minimalSize: {
@@ -556,37 +547,46 @@ CEPMODEMON.initializeCEPMODEMON = function(editorMain, editorMini){
     });
     epa_compose.addPorts([portInA,portInB,portOut1]);
 
-    var epa_project = new joint.shapes.cep.Element({
+    var epa_aggregate = new joint.shapes.cep.Element({
         position: {
-            x: 1470,
+            x: 1450,
             y: 10,
         },
         minimalSize: {
-            width: 120,
-            height: 130,
+            width: 130,
+            height: 340,
         },
         size: {
-            width: 120,
-            height: 130,
+            width: 130,
+            height: 340,
         },
         template: [
             '<div class="epa-element" >',
-            '<h4 style="background: #22adc6"> Project </h4>',
+            '<h4 style="background: #0c926e"> Aggregate </h4>',
             '<form>',
-            '<label for="projectName" >ProjectName:</label>',
-            '<input type="text" name="projectName"><br>',
-            '<label for="projectMode" >ProjectionMode:</label>',
-            '<select name="projectMode">',
-            '<option>keep</option>',
-            '<option>omit</option>',
+            '<label for="aggregateName">AggregateName:</label>',
+            '<input type="text" name="aggregateName"><br>',
+            '<label for="aggregateType">AggregateFunction:</label>',
+            '<select name="aggregateType">',
+            '<option>Sum</option>',
+            '<option>Maximum</option>',
+            '<option>Minimum</option>',
+            '<option>Average</option>',
+            '<option>Custom</option>',
             '</select><br>',
-            '<label for="projectAttr" class="A">ProjectionAttr:</label>',
-            '<input type="text" name="projectAttr"><br>',
+            '<label for="aggregateAttributes">AggregationAttributes:</label>',
+            '<input type="text" name="aggregateAttributes"><br>',
+            '<label for="customAggregateFunction">CustomFunction:</label>',
+            '<textarea name="customAggregateFunction" rows="3" ></textarea>',
+            '<label for="outputEventType">OutputEventType:</label>',
+            '<input type="text" name="outputEventType"><br>',
+            contextTemplate,
             '</form>',
             '</div>'
         ].join(''),
     });
-    epa_project.addPorts([portIn1,portOut1]);
+
+    epa_aggregate.addPorts([portIn1,portOut1])
 
     let epa_generic = new joint.shapes.cep.Element({
         position: {
