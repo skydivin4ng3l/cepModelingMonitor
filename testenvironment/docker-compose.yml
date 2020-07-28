@@ -96,6 +96,11 @@ services:
     environment:
       CONNECT_URL: 'connect:8083'
 
+  cepmodemon:
+    image: cepmodemon/prepro:v0.1.9
+    command:
+      - --broker=kafka:9092
+
 volumes:
   zookeeper_data:
     driver: local

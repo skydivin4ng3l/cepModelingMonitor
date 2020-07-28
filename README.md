@@ -23,6 +23,12 @@ cd testenvironment
 docker-compose up --force-recreate kafka zookeeper 
 ```
 Proceed with the **Start CEPModeMon**
+##### For testing purposes:
+The Pre-Processor can be started without **Data Collector** after all Event Streams are labeled within the model.
+```shell script
+cd testenvironment
+docker-compose up cepmodemon
+```
 
 ---
 
@@ -69,10 +75,12 @@ For rebuilding protobuf schemas you need to install [protoc](https://github.com/
 npm run build_proto
 ```
 ## Known Issues
-* F5 refresh in Client will reset CEPModeMon Client but not the Webserver
-* Actions like rename of Stream labels or Load cannot be canceled
-* Continue Monitoring after a Stop will not reset the Old Monitoring Data
-* Zooming may influence insertion of new Elements, if not on neutral zoom level. 
+* F5 refresh in Client will reset CEPModeMon Client but not the Webserver.
+* Actions like rename of Stream labels or Load cannot be canceled.
+* Continue Monitoring after a Stop will not reset the Old Monitoring Data.
+* Zooming may influence insertion of new Elements, if not on neutral zoom level.
+* If not all Streams get aggregate information the Pre-Processor might have missed the others on startup. Restart the Docker Environment.
+* Chartjs labels might not work correctly.
 
 ## An example Architecture
 CEPModeMons monitoring capabilities require an architecture like this: 
