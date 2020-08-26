@@ -1,4 +1,4 @@
-# CEPModeMon - Complex Event Processing Monitoring & Modelling
+# CEPModeMon - Complex Event Processing Modelling & Monitoring
 CEPModeMon is a Prototype for a combined webapplication for modelling and monitoring Complex Event Processing Pipelines.
 
 <img src="examples/BasicGUI_2.png?raw=true" alt="Picture of the GUI" width="600" height="whatever">
