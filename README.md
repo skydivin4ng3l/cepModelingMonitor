@@ -1,5 +1,5 @@
 # CEPModeMon - Complex Event Processing Monitoring & Modelling
-CEPModeMon is a Prototype for a combined webapplication for modelling and monitoring Complex Event Processing Pipelines
+CEPModeMon is a Prototype for a combined webapplication for modelling and monitoring Complex Event Processing Pipelines.
 
 <img src="examples/BasicGUI_2.png?raw=true" alt="Picture of the GUI" width="600" height="whatever">
 
@@ -57,7 +57,7 @@ bazel run -- //auxiliary/producers/replayer:replayer --port 8083 --replay-log de
 ``` 
 Now you should see after a while that the line charts display the aggregated Event Count (per 5 second windows) on the Event Streams and individual Events along the Event Streams, like this:  
 <img src="examples/CEPMM_CEPTA_EPN.png?raw=true" alt="Model and Monitor Example" width="600" height="whatever"> 
-####Note
+#### Note
 If not all Streams get aggregate information the Pre-Processor might have missed the others on start up:
  Close everything and restart but Run Core and Pre-Processor separately:
  ```shell script
