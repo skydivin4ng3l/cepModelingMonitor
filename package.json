@@ -16,7 +16,7 @@
     "chart.js": "^2.9.3",
     "express": "^4.17.1",
     "google-protobuf": "^3.12.2",
-    "jointjs": "^3.1.1",
+    "jointjs": "^3.3.0",
     "kafka-node": "^5.0.0",
     "long": "^4.0.0",
     "socket.io": "^2.3.0"
